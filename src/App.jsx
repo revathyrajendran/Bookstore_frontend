@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import Home from './users/upages/Home'
 import Preloader from './Components/Preloader'
 import Auth from './Pages/Auth'
-import Allbooks from './users/upages/Allbooks'
+import Allproducts from './users/upages/Allproducts'
 import Viewbook from './users/upages/Viewbook'
 import Profile from './users/upages/Profile'
 import Careers from './users/upages/Careers'
@@ -25,7 +25,7 @@ function App() {
  useEffect(()=>{
    setTimeout(() => {
      setloading(false)
-  },7000);
+  },4000);
  })
  
 
@@ -37,7 +37,7 @@ function App() {
         <Route path='/login' element={<Auth/>}/> 
         
         <Route path='/register' element={<Auth register/>} />
-        <Route path='/all-books' element={<Allbooks/>} />
+        <Route path='/all-products' element={<Allproducts/>} />
          <Route path='books/:id/view' element={<Viewbook/>} />
          <Route path='/profile' element={<Profile/>} />
          <Route path='/careers' element={<Careers/>} />

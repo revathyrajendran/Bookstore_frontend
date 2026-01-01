@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faXTwitter  } from '@fortawesome/free-brands-svg-icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { faAddressCard, faUser } from '@fortawesome/free-regular-svg-icons';
 import { faBars, faPowerOff } from '@fortawesome/free-solid-svg-icons';
 import { width } from '@fortawesome/free-solid-svg-icons/faUser';
+
+
 
 
 
@@ -17,6 +19,8 @@ const Header = () => {
   const [userDp,setUserDp] = useState("")
   //dropdown while clicking dp
   const[dropdown,setDropDown]= useState(false)
+  //navigate
+    const navigate = useNavigate();
 
 
   //to get  user details on opening the page itself 
@@ -26,26 +30,30 @@ const Header = () => {
       setToken(token)
       //it was stored as string, we need here as object
       const user = JSON.parse(sessionStorage.getItem("user"))
+      //profile from sessional storage
       setUserDp(user.profile)
     }
 
-  },[])
+  },[token])
   //logout
   const logout = ()=>{
     sessionStorage.clear()
+    setToken("")
+    setUserDp("")
+    setDropDown(false)
     navigate('/')
   }
   return ( 
     <>
-    <div className="grid grid-cols-3 p-3">
+    <div className="grid grid-cols-3 p-3 ">
       {/*Logo */}
       <div>
-        <img width={'50px'} height={'50px'} src="/bookstrore logo.png" alt="logo" />
-        <h1 className="text-2xl font-bold ms-2 md:hidden">BOOKSTORE</h1>
+        <img width={'50px'} height={'50px'} src="/bookstrorelogo.png" alt="logo" />
+        <h1 className="text-2xl font-bold ms-2 md:hidden">BookStore</h1>
       </div >
        {/*title*/}
        <div className='md:flex justify-center items-center hidden'>
-        <h1 className="text-2xl font-bold">BOOK STORE</h1>
+        <h1 className="text-2xl font-bold">BookStore</h1>
         </div>
       
       
@@ -65,14 +73,14 @@ const Header = () => {
 
           {/*!dropdown means opposite to current value on clicking */}
            <button onClick={()=>setDropDown(!dropdown)} className=' w-full  bg-white px-3 py-2 shadow-xs hover:bg-gray-500'>
-            <img className='mx-2' width={"30px"} height={"30px"} style={{borderRadius:'50%'}} src={userDp==""?"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg":""} alt="userdp" />
+            <img className='mx-2' width={"30px"} height={"30px"} style={{borderRadius:'50%'}} src={userDp==""?"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg":userDp.startsWith("https://lh3.googleusercontent.com/")?userDp:"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg"} alt="userdp" />
            </button>
            {/*dropdown */}
                { dropdown&& <div className='absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'>
                   <div className="py-1">
                     <Link className='block py-2 px-4 text-sm text-gray-700' to={'/profile'}>   <FontAwesomeIcon icon={faAddressCard} className='me-2' /> Profile  </Link>
                     {/*Logout */}
-                    <button onClick={logout} className='block py-2 px-4 text-sm text-gray-700' ><FontAwesomeIcon icon={faPowerOff} className='me-2' /> Logout</button>
+                    <button  onClick={logout} className='block py-2 px-4 text-sm text-gray-700' ><FontAwesomeIcon icon={faPowerOff} className='me-2' /> Logout</button>
                   </div>
                 </div>}
          </div>
@@ -85,7 +93,7 @@ const Header = () => {
     </div>
 
     {/*List of items */}
-   <nav className='bg-zinc-800 p-3 w-full text-white'>
+   <nav className='bg-black  p-3 w-full text-white text-bold'>
     {/*Menubar & login only for mobike screen */}
     <div className="flex justify-between items-center text-xl md:hidden">
       <button onClick={()=>setListStatus(!liststatus)}><FontAwesomeIcon icon={faBars} /></button>
@@ -94,9 +102,9 @@ const Header = () => {
             <Link to={'/login'}><button className='me-2 hover:bg-black hover:text-white px-3 py-2 border border-black ms-2 rounded'> <FontAwesomeIcon icon={faUser }  className='ms-2 ' /> Login</button></Link>
     </div>
 
-      <ul className={liststatus?'flex flex-col':'hidden md:flex justify-center items-center '}>
+      <ul className={liststatus?'flex flex-col':'hidden md:flex justify-center items-center  '}>
        <li className='mx-4 mt-3 md:mt-0'> <Link to={'/'} >HOME</Link></li>
-        <li className='mx-4 mt-3  md:mt-0'><Link to={'/all-books'} >BOOKS</Link></li>
+        <li className='mx-4 mt-3  md:mt-0'><Link to={'/all-products'} >BOOKS</Link></li>
         <li className='mx-4 mt-3  md:mt-0'><Link to={'/careers'} >CAREERS</Link></li>
        <li className='mx-4 mt-3  md:mt-0'> <Link to={'/contact'} >CONTACT</Link></li>
       </ul>

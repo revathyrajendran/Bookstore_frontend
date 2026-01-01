@@ -4,7 +4,7 @@ const Preloader = () => {
   return (
     <>
      <div className='w-full h-screen flex justify-center items-center'>
-            <img src="https://i.gifer.com/Ybin.gif" alt="preloader" />
+            <img style={{height:'300px' , width:'300px'}} src="https://clipart-library.com/img/991804.gif" alt="preloader" />
      </div>
     </>
   )

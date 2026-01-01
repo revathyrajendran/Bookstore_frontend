@@ -1,26 +1,51 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../ucomponents/Header'
 import Footer from '../../Components/Footer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
+import { getBooksUploadedByUsers } from '../../Services/allApis'
 
 
 
 const Home = () => {
+  //this state holds data of books uploaded by users that can bee seen in home as users logs in, we expect an array having recent 4 books because of limit(4)
+  const [homeBooks, setHomeBooks] = useState([])
+  
+  //to load recent 4 books uploaded by users as a side effect 
+  useEffect(()=>{
+    getHomeBooks()
+
+  },[])
+  console.log(homeBooks);
+  
+
+  const getHomeBooks = async ()=>{
+    try{
+       const result = await getBooksUploadedByUsers()
+       //if api result is 200 is checked
+       if(result.status==200){
+        //then data in the result is updated in the arrayt
+        setHomeBooks(result.data)
+       }
+    }catch(err){
+      console.log(err);
+      
+    }
+  }
   return (
     <>
     <Header/>
       {/*Landing */}
-      <div style={{height:'500px'}} className="flex flex-col text-white  bg-center text-white justify-center items-center bg-[url(/landing.jpg)]">
+      <div style={{height:'500px'}}  className="  flex flex-col text-white  bg-center text-white justify-center items-center bg-[url(/landing.jpg)] ">
        
-           <div  style={{height:'500px', backgroundColor:'rgba(0,0,0,0.5'}} className=" w-full flex flex-col justify-center items-center">
-             <h1 className='text-6xl font-bold '>Wonderful Gifts </h1>
-             <p className='font-bold'>Give your family and friends  book</p>
+           <div  style={{height:'500px', backgroundColor:'rgba(0,0,0,0.5'}} className=" p-5 w-full flex flex-col justify-center items-center">
+             <h1 className='text-6xl font-bold '>Wonderful Gifts</h1>
+             <p className='font-bold'>Give your family and friends a book📖</p>
           
                  {/*search */}
                <div className="mt-9">
-                  <input type="text" className='bg-white p-3 w-100 rounded-3xl placeholder-gray-500' placeholder='Search Books' />
+                  <input type="text" className='bg-white p-3 w-100 rounded-3xl placeholder-gray-500' placeholder='Search Products' />
                   <FontAwesomeIcon icon={faMagnifyingGlass} style={{marginLeft:'-40px'}} className='text-gray-500' />
                  </div>
            </div>
@@ -35,49 +60,29 @@ const Home = () => {
            
            {/*Books  in latest collections */}
            <div className="md:grid grid-cols-4 mt-5 w-full">
-               <div className="shadow p-3 rounded mx-2">
-                  <img width={'100%'} height={'300px'} src="https://5.imimg.com/data5/SELLER/Default/2021/9/IM/NZ/XP/133456484/one-arranged-murder-paperback.jpg" alt="" />
+            {/* to be repeated based on homeBooks Array */}
+              
+               {
+                homeBooks.length>0?
+                homeBooks?.map((book,index)=>(
+                <div key={index} className="shadow p-3 rounded mx-2">
+                  <img width={'100%'} height={'300px'} src={book?.imageUrl} alt="uploadedbook" />
                   <div className="flex flex-col justify-center align-center">
-                    <p className="text-blue-700 font-bold text-lg">Author</p>
-                    <p>BookTitle</p>
-                    <p>$ 250</p>
+                    <p className="text-blue-700 font-bold text-lg">{book?.author}</p>
+                    <p>{book?.title}</p>
+                    <p>$ {book?.discountPrice}</p>
                     
             
                   </div>
                 </div>
+                ))
+                
+                :
+                <p className='text-bold text-2xl'>Loading...........</p>
+                }
 
-                 <div className="shadow p-3 rounded mx-2">
-                  <img width={'100%'} height={'300px'} src="https://5.imimg.com/data5/SELLER/Default/2021/9/IM/NZ/XP/133456484/one-arranged-murder-paperback.jpg" alt="" />
-                  <div className="flex flex-col justify-center align-center">
-                    <p className="text-blue-700 font-bold text-lg">Author</p>
-                    <p>BookTitle</p>
-                    <p>$ 250</p>
-                    
-            
-                  </div>
-                </div>
-
-                 <div className="shadow p-3 rounded mx-2">
-                  <img width={'100%'} height={'300px'} src="https://5.imimg.com/data5/SELLER/Default/2021/9/IM/NZ/XP/133456484/one-arranged-murder-paperback.jpg" alt="" />
-                  <div className="flex flex-col justify-center align-center">
-                    <p className="text-blue-700 font-bold text-lg">Author</p>
-                    <p>BookTitle</p>
-                    <p>$ 250</p>
-                    
-            
-                  </div>
-                </div>
-
-                 <div className="shadow p-3 rounded mx-2">
-                  <img width={'100%'} height={'300px'} src="https://5.imimg.com/data5/SELLER/Default/2021/9/IM/NZ/XP/133456484/one-arranged-murder-paperback.jpg" alt="" />
-                  <div className="flex flex-col justify-center align-center">
-                    <p className="text-blue-700 font-bold text-lg">Author</p>
-                    <p>BookTitle</p>
-                    <p>$ 250</p>
-                    
-            
-                  </div>
-                </div>
+                 
+          
            </div>
 
            {/*Explore more button */}

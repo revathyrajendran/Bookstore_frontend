@@ -7,7 +7,7 @@ const commonApi= async(httpRequest,url,reqBody,reqHeader)=>{//reqHeader because 
            method:httpRequest,
            url,//axios key is same as value we pass
            data:reqBody,
-           headers:reqHeader?reqHeader:{}//if there is reqHeader, then it is present as an object
+           headers:reqHeader
 
 
     }

@@ -8,7 +8,7 @@ import { faBars } from '@fortawesome/free-solid-svg-icons'
 
 
 
-const Allbooks = () => {
+const Allproducts = () => {
   const [liststatus,setListStatus]=useState(false)
   return (
     
@@ -149,4 +149,4 @@ const Allbooks = () => {
   )
 }
 
-export default Allbooks
+export default Allproducts

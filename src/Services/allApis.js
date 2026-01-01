@@ -10,14 +10,28 @@ import SERVERURL from "./ServerURL"
      export const loginApi=async(reqBody)=>{
         return await commonApi("POST",`${SERVERURL}/login`,reqBody)//for register , no header needed.
      }
-    //home page books api
+     //google-login
+     export const googleLoginApi=async(reqBody)=>{
+        return await commonApi("POST",`${SERVERURL}/google-login`,reqBody)//for register , no header needed.
+     }
+
+    //home page books api - to fetch all uploaded bpoks from books collection, calld by home component of users
+    export const getBooksUploadedByUsers = async()=>{
+      return await commonApi("GET",`${SERVERURL}/home-books`)
+    }
     //all books api
 
 //authorized user api -user
     //view all books
     //view single books
-    //upload book
+
+    //upload book - this needs reqHeader because data type and authorisation is guven through headers, called by profile component.   --This is an authorized user API call---
+    export const addBookApi=async(reqBody,reqHeader)=>{
+      return await commonApi("POST",`${SERVERURL}/add-book`,reqBody,reqHeader)
+    }
+    
     //profile update
+
     //purchased book
     //approved book
 

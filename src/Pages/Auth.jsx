@@ -5,12 +5,10 @@ import React from 'react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer,toast} from 'react-toastify'
-import { loginApi, registerApi } from '../Services/allApis'
+import { googleLoginApi, loginApi, registerApi } from '../Services/allApis'
 import { GoogleLogin , GoogleOAuthProvider} from '@react-oauth/google';  
-
-
-
-
+//import jwtdecode
+import { jwtDecode } from "jwt-decode"
 
 
 //if register is true , {register} from App.jsx
@@ -28,7 +26,7 @@ const Auth = ({register}) => {
   const handleRegister=async()=>{
     console.log("Inside handleRegister ");
     //object destructuring,easy to access object values
-    const{email,password}=userDetails
+    const{username,email,password}=userDetails
     //make sure these input values are present
     if(!username|| !email||!password){
       toast.info('Please enter all values!')
@@ -65,7 +63,7 @@ const Auth = ({register}) => {
 //login functionality
 const handlelogin= async()=>{
   //object destructuring,easy to access object values
-    const{username,email,password}=userDetails
+    const{email,password}=userDetails
     //make sure these input values are present
     if( !email||!password){
       toast.info('Please enter all values!')
@@ -79,6 +77,8 @@ const handlelogin= async()=>{
         sessionStorage.setItem("user",JSON.stringify(result.data.user))
         //Also store token , token is already string , there no need for stringify
         sessionStorage.setItem("token",result.data.token)
+        console.log(result.data.token);
+        
 
         //user and admin redirection, only after 2.5 secons
         setTimeout(() => {
@@ -113,6 +113,44 @@ const handlelogin= async()=>{
     }
 }
  
+//googlelogin
+  //decoding or credentials
+const handleGoogleLogin = async(credentialResponse)=>{
+  console.log("Inside Google Login Api");
+  
+ const credential = credentialResponse.credential
+ const details = jwtDecode(credential)
+ console.log(details);
+ try{
+     const result = await googleLoginApi({username:details.name,email:details.email,password:'googlepswd',profile:details.picture})
+     console.log(result);
+     if(result.status==200){
+      toast.success("Login Successfull !!!")
+      //session storage to temporarily store login credentials, stringify is used to conver object to dtring becaise session storage can't handle objects.
+        sessionStorage.setItem("user",JSON.stringify(result.data.user))
+        //Also store token , token is already string , there no need for stringify
+        sessionStorage.setItem("token",result.data.token)
+
+        //user and admin redirection, only after 2.5 secons
+        setTimeout(() => {
+          if(result.data.user.role=="admin"){
+            navigate('/admin-dashboard')
+         }else{
+            navigate('/')
+         }
+        }, 2500);
+     }else{
+      toast.error("Something Went Wrong!!!!")
+        
+     }
+     
+ 
+ }
+ catch(err){
+  console.log(err);
+  
+ }
+}
 return (
     <>
     
@@ -175,6 +213,7 @@ return (
                     <GoogleLogin
                         onSuccess={credentialResponse => {
                         console.log(credentialResponse);
+                        handleGoogleLogin(credentialResponse)
                                }}
                           onError={() => {
                          console.log('Login Failed');

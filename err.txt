@@ -32,13 +32,12 @@ const Profile = () => {
   //every loggedin users will have a token stored in sessionstorage, so it must checked before hand also, useeffect is used for that purpose.
   useEffect(()=>{
     //checking if session storage has any token
-    const storedToken = sessionStorage.getItem("token")
-    if(storedToken){
-      setToken(storedToken)
+    if(sessionStorage.getItem(token)){
+      setToken(sessionStorage.getItem(token))
     }
 
   },[])
-  console.log(sessionStorage.getItem("token"));
+  console.log(token);
   
   
   
@@ -117,8 +116,6 @@ try {
           //clear all field
           handleReset()
         } else {
-          
-          
           toast.error('Something went wrong!!!')
           //clear all field
           handleReset()
@@ -250,8 +247,8 @@ try {
                   {/*book image  - copied */}
                   { preview && <div className=" flex justify-center items-center">
                     {
-                      previewList?.map((imgUrl,index)=>(
-                          <img key={index} src={imgUrl} width={'70px'} height={'70px'}  alt="book image" className='mx-3' />
+                      previewList?.map(imgUrl=>(
+                          <img src={imgUrl} width={'70px'} height={'70px'}  alt="book image" className='mx-3' />
                       ))
                     }
                      { previewList.length<3 && <label htmlFor="bookImage">
