@@ -19,7 +19,10 @@ import SERVERURL from "./ServerURL"
     export const getBooksUploadedByUsers = async()=>{
       return await commonApi("GET",`${SERVERURL}/home-books`)
     }
-    //all books api
+    //all books api - to fetch all uploaded books for a logged in user, called by all products component, that when after logging in , a uswer clicks Books link from header of home page , header to pass token of logged in user and this must load as soon as user reached allproducts page with search bar
+    export const getAllBooksApi = async(reqHeader)=>{
+      return await commonApi("GET",`${SERVERURL}/all-books`,{},reqHeader)
+    }
 
 //authorized user api -user
     //view all books
