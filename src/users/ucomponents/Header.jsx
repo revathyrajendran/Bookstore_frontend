@@ -97,9 +97,29 @@ const Header = () => {
     {/*Menubar & login only for mobike screen */}
     <div className="flex justify-between items-center text-xl md:hidden">
       <button onClick={()=>setListStatus(!liststatus)}><FontAwesomeIcon icon={faBars} /></button>
-      {/*Login link */}
+      {/*Login link - Mobile Screen */}
          
-            <Link to={'/login'}><button className='me-2 hover:bg-black hover:text-white px-3 py-2 border border-black ms-2 rounded'> <FontAwesomeIcon icon={faUser }  className='ms-2 ' /> Login</button></Link>
+            { !token?
+        <Link to={'/login'}><button className='me-2 hover:bg-black hover:text-white px-3 py-2 border border-black ms-2 rounded'> <FontAwesomeIcon icon={faUser }  className='ms-2 ' /> Login</button></Link>
+        :
+        <div className='relative inline-block text-left'>
+         <div >
+
+          {/*!dropdown means opposite to current value on clicking */}
+           <button onClick={()=>setDropDown(!dropdown)} className=' w-full  bg-white px-3 py-2 shadow-xs hover:bg-gray-500'>
+            <img className='mx-2' width={"30px"} height={"30px"} style={{borderRadius:'50%'}} src={userDp==""?"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg":userDp.startsWith("https://lh3.googleusercontent.com/")?userDp:"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg"} alt="userdp" />
+           </button>
+           {/*dropdown */}
+               { dropdown&& <div className='absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'>
+                  <div className="py-1">
+                    <Link className='block py-2 px-4 text-sm text-gray-700' to={'/profile'}>   <FontAwesomeIcon icon={faAddressCard} className='me-2' /> Profile  </Link>
+                    {/*Logout */}
+                    <button  onClick={logout} className='block py-2 px-4 text-sm text-gray-700' ><FontAwesomeIcon icon={faPowerOff} className='me-2' /> Logout</button>
+                  </div>
+                </div>}
+         </div>
+        </div>
+        }
     </div>
 
       <ul className={liststatus?'flex flex-col':'hidden md:flex justify-center items-center  '}>

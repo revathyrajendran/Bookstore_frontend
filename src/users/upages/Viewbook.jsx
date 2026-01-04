@@ -4,10 +4,41 @@ import Footer from '../../Components/Footer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCamera, faEye } from '@fortawesome/free-regular-svg-icons'
 import { faBackward, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import { getASingleBookApi } from '../../Services/allApis'
 
 const Viewbook = () => {
   const[modalstatus,setModalStatus]= useState(false)
+
+  //To view a single book, we need the id of the particular book : <Route path='books/:id/view' element={<Viewbook/>} /> this id value. So destructuring id value . Useparams is used to get dynamic Id.
+  const {id} = useParams()
+  //state to hold book details
+  const[book,setBook]=useState({})
+  
+  //to view a book , this function does not need to use id as an argument because, already we have declared the variable using use params, so can be accessed anywhere in the component.
+  const viewBookDetails = async()=>{
+    //Here usestate is not used for teoken , instead just if else statement is used.
+    const token = sessionStorage.getItem("token")
+    if(token){
+      //defining reqheader
+       const reqHeader = {
+        "Authorization" : `Bearer ${token}`
+       } 
+       try{
+        const result = await getASingleBookApi(id,reqHeader)
+        if(result.status == 200){
+             setBook(result.data)
+        }
+
+       }
+       catch(err){
+        console.log(err);
+        
+       }
+
+    }
+
+  }
   return (
     <>
     <Header/>

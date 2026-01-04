@@ -19,14 +19,19 @@ import SERVERURL from "./ServerURL"
     export const getBooksUploadedByUsers = async()=>{
       return await commonApi("GET",`${SERVERURL}/home-books`)
     }
-    //all books api - to fetch all uploaded books for a logged in user, called by all products component, that when after logging in , a uswer clicks Books link from header of home page , header to pass token of logged in user and this must load as soon as user reached allproducts page with search bar
+    
+
+//authorized user api -user
+    
+//all books api - to fetch all uploaded books for a logged in user, called by all products component, that when after logging in , a uswer clicks Books link from header of home page , header to pass token of logged in user and this must load as soon as user reached allproducts page with search bar
     export const getAllBooksApi = async(reqHeader)=>{
       return await commonApi("GET",`${SERVERURL}/all-books`,{},reqHeader)
     }
+    //view single books - bookId is an argument and not body , reqHeader is needed, because only logged in users can see books that they have not uploaded and then only can view a single book.Nobody buys a book that thye have sold, commonApi has a structure httpmenthod, url, reqbody, reqheader . This Api call is made by Viewbook Component.
+    export const getASingleBookApi = async(bookId,reqHeader)=>{
+         return await commonApi("GET",`${SERVERURL}/books/${bookId}/view`,{},reqHeader)
+    }
 
-//authorized user api -user
-    //view all books
-    //view single books
 
     //upload book - this needs reqHeader because data type and authorisation is guven through headers, called by profile component.   --This is an authorized user API call---
     export const addBookApi=async(reqBody,reqHeader)=>{
