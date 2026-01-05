@@ -8,10 +8,11 @@ import { ToastContainer,toast} from 'react-toastify'
 import { getAllBooksApi } from '../../Services/allApis'
 
 
-
-
-
 const Allproducts = () => {
+
+  //here allcategories keep categories of books. But we dont know what exact category book a user uploads, so categories must be unique. So tempArray was declared
+
+
   const [liststatus,setListStatus]=useState(false)
   //token of logged in user
   const[token,setToken]=useState("")
@@ -19,8 +20,16 @@ const Allproducts = () => {
 
  //books when user clicks books from home page and is directed to allproducts page
  const[books,setBooks]=useState([])
+
+ //temporary book array for filtering
+ const[tempBooks,setTempBooks] = useState([])
  //just to see if we have no error
  console.log(books);
+
+ //array to keep categories for filtering : because writing code for all categories is a difficut task here
+ const[allCategories,setAllCategories]=useState([])
+console.log(allCategories);
+
  
   useEffect(()=>{
     if(sessionStorage.getItem("token")){
@@ -43,6 +52,21 @@ const Allproducts = () => {
       const result = await getAllBooksApi(reqHeader)
       if(result.status == 200){
         setBooks(result.data)
+        //for filter
+        setTempBooks(result.data)
+        //so inside tempCategory , we need to hold categories , because otherwise all these categories will appear in the sidebar : eg: fiction fiction . 
+        const tempCategory= result.data.map(item=>item.category)
+        //console.log(tempCategory);
+        
+        //temparray to hold temporaray category or categories of books sold by user
+        const tempArray = [...new Set(tempCategory)]
+        
+        //if any categoty of books now uploaded by the user is not in the tempArray , then it is pushed or created
+        //tempCategory.forEach(item=>!item.includes(tempArray) && tempArray.push(item) )
+        console.log(tempArray);
+        
+ 
+        setAllCategories(tempArray)
       }
       else{
         console.log(result);
@@ -58,6 +82,20 @@ const Allproducts = () => {
       
     }
   }
+
+  //To filter and see books sold based on their category , category is the argument here
+  const filterBooks =(category) =>{
+     //filtered books must also be in the books array, so filtering it because filter gives results that only satisfy a condition, each book in books is item here, lowercase to mak speelings of filter category and argument category the same. setBooks because we need to see filtered books in all products page itself and books were holding every books, now also filtered books. The page will display all books if user has not applied any filter.
+     if(category==="No-Filter"){
+        //to tackle token issue
+        setBooks(tempBooks)
+     }else{
+      //beacuse of teken issue, we have created a tempbooks and used it for filtering purpose
+        setBooks(tempBooks?.filter(item=>item.category.toLowerCase().includes(category.toLowerCase())))
+     }
+    
+  }
+
   return (
     
    
@@ -89,50 +127,21 @@ const Allproducts = () => {
           </div>
           {/*Filter options in 1 div */}
           <div className={liststatus?'block':'md:block hidden'}>
-            <div className="mt-3">
-              <input type="radio" name='filter' id='literary' />
-              <label className='ms-3' htmlFor="literary" >Literary Fiction</label>
-            </div>
-  
-            <div className="mt-3">
-              <input type="radio" name='filter' id='philosophy' />
-              <label className='ms-3' htmlFor="philosophy" >Philosophy</label>
-              
-            </div>
-             <div className="mt-3">
-              <input type="radio" name='filter' id='Romance' />
-              <label className='ms-3' htmlFor="Romance" >Romance</label>
-            </div>
-  
-            <div className="mt-3">
-              <input type="radio" name='filter' id='Thriller' />
-              <label className='ms-3' htmlFor="Thriller" > Mystery/Thriller</label>
-            </div>
-  
-             <div className="mt-3">
-              <input type="radio" name='filter' id='politics' />
-              <label className='ms-3' htmlFor="politics" >Politics</label>
-            </div>
-  
-            <div className="mt-3">
-              <input type="radio" name='filter' id='help' />
-              <label className='ms-3' htmlFor="help" >Self-help</label>
-            </div>
-  
-            <div className="mt-3">
-              <input type="radio" name='filter' id='auto' />
-              <label className='ms-3' htmlFor="auto" >Auto/Biography</label>
-            </div>
-  
-            <div className="mt-3">
-              <input type="radio" name='filter' id='horror' />
-              <label className='ms-3' htmlFor="horror" >Horror</label>
-            </div>
-  
+           
+          {  
+              allCategories?.length>0 &&
+              allCategories?.map((category,index)=>(
+                 <div key={index} className="mt-3">
+              <input type="radio" name='filter' id={category} onClick={()=>{filterBooks({category})}} />
+              <label className='ms-3' htmlFor={category} > {category}</label>
+             </div>
+              ))
+
+            }
             
             <div className="mt-3">
-              <input type="radio" name='filter' id='nofilter' />
-              <label className='ms-3' htmlFor="nofilter" >No Filter</label>
+              <input type="radio" name='filter' id='nofilter' onClick={()=>{filterBooks("No-Filter")}} />
+              <label className='ms-3' htmlFor="nofilter" >No-Filter</label>
             </div>
           </div>
        
