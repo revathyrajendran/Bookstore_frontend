@@ -24,8 +24,9 @@ import SERVERURL from "./ServerURL"
 //authorized user api -user
     
 //all books api - to fetch all uploaded books for a logged in user, called by all products component, that when after logging in , a uswer clicks Books link from header of home page , header to pass token of logged in user and this must load as soon as user reached allproducts page with search bar
-    export const getAllBooksApi = async(reqHeader)=>{
-      return await commonApi("GET",`${SERVERURL}/all-books`,{},reqHeader)
+    export const getAllBooksApi = async(search,reqHeader)=>{
+         //search is a key which holds value of search variable same as is in argument
+      return await commonApi("GET",`${SERVERURL}/all-books?search=${search}`,{},reqHeader)
     }
     //view single books - bookId is an argument and not body , reqHeader is needed, because only logged in users can see books that they have not uploaded and then only can view a single book.Nobody buys a book that thye have sold, commonApi has a structure httpmenthod, url, reqbody, reqheader . This Api call is made by Viewbook Component.
     export const getASingleBookApi = async(bookId,reqHeader)=>{

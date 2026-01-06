@@ -9,26 +9,26 @@ import { getAllBooksApi } from '../../Services/allApis'
 
 
 const Allproducts = () => {
-
   //here allcategories keep categories of books. But we dont know what exact category book a user uploads, so categories must be unique. So tempArray was declared
-
-
+  //For search , we have not created any separate function , see getAllBooks.
   const [liststatus,setListStatus]=useState(false)
   //token of logged in user
   const[token,setToken]=useState("")
  //When user opens this page , the token of the user must be stored in token state
-
+ 
  //books when user clicks books from home page and is directed to allproducts page
  const[books,setBooks]=useState([])
 
  //temporary book array for filtering
  const[tempBooks,setTempBooks] = useState([])
- //just to see if we have no error
- console.log(books);
+console.log(books);
 
  //array to keep categories for filtering : because writing code for all categories is a difficut task here
  const[allCategories,setAllCategories]=useState([])
 console.log(allCategories);
+
+//search data
+const [searchKey,setSearchKey] = useState("")
 
  
   useEffect(()=>{
@@ -38,7 +38,7 @@ console.log(allCategories);
       //calling getAllBooksApi, when user clicks books from header of home page is directed to allproducts page wiuth search option also
       getAllBooks(usertoken)
     }
-  },[])
+  },[searchKey])
 
   //fetch all books in all products page , redirected from Home page , when logged in user clicks books link from header of home page.
   const getAllBooks = async(usertoken)=>{
@@ -48,8 +48,8 @@ console.log(allCategories);
     }
     //error prone
     try{
-      //fetch all books for logged in user , as soon as the page is reached to result
-      const result = await getAllBooksApi(reqHeader)
+      //fetch all books for logged in user , as soon as the page is reached to result . Searchkey initailly an emty string
+      const result = await getAllBooksApi(searchKey,reqHeader)
       if(result.status == 200){
         setBooks(result.data)
         //for filter
@@ -111,7 +111,7 @@ console.log(allCategories);
         <h1 className="text-3xl">Collections</h1>
         {/*Search */}
         <div className="flex my-5">
-           <input type="text" className="p-2 rounded text-black border-gray-200 placeholder-gray-600 border w-100 shadow" placeholder='Search by titles' />
+           <input type="text" className="p-2 rounded text-black border-gray-200 placeholder-gray-600 border w-100 shadow" placeholder='Search by titles' onChange={e=>setSearchKey(e.target.value)} />
            <button className="bg-blue-900 text-white p-2">Search</button>
         </div>
         </div>
@@ -132,7 +132,7 @@ console.log(allCategories);
               allCategories?.length>0 &&
               allCategories?.map((category,index)=>(
                  <div key={index} className="mt-3">
-              <input type="radio" name='filter' id={category} onClick={()=>{filterBooks({category})}} />
+              <input type="radio" name='filter' id={category} onClick={()=>{filterBooks(category)}} />
               <label className='ms-3' htmlFor={category} > {category}</label>
              </div>
               ))

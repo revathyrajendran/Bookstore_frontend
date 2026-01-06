@@ -1,23 +1,48 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Header from '../ucomponents/Header'
 import Footer from '../../Components/Footer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { ToastContainer,toast} from 'react-toastify'
 import { getBooksUploadedByUsers } from '../../Services/allApis'
-
-
+import { searchBookContext } from '../../contextAPI/ContextShare'
 
 const Home = () => {
   //this state holds data of books uploaded by users that can bee seen in home as users logs in, we expect an array having recent 4 books because of limit(4)
   const [homeBooks, setHomeBooks] = useState([])
+
+  //for navigation
+  const navigate = useNavigate()
+
+  //{searchkey,setSearchKey} and searchBookContext are defined as an object in ContextShare.jsx
+  const {searchkey,setSearchKey} = useContext(searchBookContext)
   
   //to load recent 4 books uploaded by users as a side effect 
   useEffect(()=>{
+    //whenever a page is open , searchkey must not have a value
+    setSearchKey("")
     getHomeBooks()
 
   },[])
-  console.log(homeBooks);
+  //console.log(homeBooks);
+
+  //search books in Home page
+  const searchBook=()=>{
+        if(!searchkey){
+             toast.warning("Please provide the Book title you need to search !!!")
+        } else if(!sessionStorage.getItem("token")){
+          toast.warning("Please Login to serach books!!")
+          setTimeout(() => {
+            navigate('/login')
+          }, 2500);
+        }else if(sessionStorage.getItem("token") && searchkey){
+          navigate('/all-products')
+        }
+        else{
+          toast.error(" Something went wrong!!!!")
+        }
+  }
   
 
   const getHomeBooks = async ()=>{
@@ -43,10 +68,10 @@ const Home = () => {
              <h1 className='text-6xl font-bold '>Wonderful Gifts</h1>
              <p className='font-bold'>Give your family and friends a book📖</p>
           
-                 {/*search */}
+                 {/*search : searchBook is defined with an argument , so here no argument is passed */}
                <div className="mt-9">
-                  <input type="text" className='bg-white p-3 w-100 rounded-3xl placeholder-gray-500' placeholder='Search Products' />
-                  <FontAwesomeIcon icon={faMagnifyingGlass} style={{marginLeft:'-40px'}} className='text-gray-500' />
+                  <input type="text" className='bg-white p-3 w-100 rounded-3xl placeholder-gray-500 text-black' placeholder='Search Products' onChange={e=>setSearchKey(e.target.value)} />
+                  <FontAwesomeIcon onClick={searchBook} icon={faMagnifyingGlass} style={{marginLeft:'-40px'}} className='text-gray-500' />
                  </div>
            </div>
      
@@ -123,6 +148,19 @@ const Home = () => {
       </section>
       
    <Footer/>
+
+   <ToastContainer
+       position="top-center"
+       autoClose={5000}
+       hideProgressBar={false}
+       newestOnTop={false}
+       closeOnClick={false}
+       rtl={false}
+       pauseOnFocusLoss
+       draggable
+       pauseOnHover
+       theme="colored"
+       />
     </>
   )
 }

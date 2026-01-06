@@ -78,6 +78,7 @@ const Viewbook = () => {
 
                 <p className="font-bold ">Real Price : {book?.Price}</p>
                 <p className="font-bold ">ISBN: {book?.isbn} </p> 
+                <p className="font-bold ">Category: {book?.category} </p> 
                
               </div>
               <div className="md:my-10 my-4">
