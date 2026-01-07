@@ -12,7 +12,7 @@ import ContextShare from './contextAPI/ContextShare.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <GoogleOAuthProvider clientId='361633475033-8tg215dbe8kiberd1m37dvfbjb2d4fmc.apps.   googleusercontent.com'>
+      <GoogleOAuthProvider clientId='361633475033-8tg215dbe8kiberd1m37dvfbjb2d4fmc.apps.googleusercontent.com'>
         <ContextShare>
            <App />
         </ContextShare>

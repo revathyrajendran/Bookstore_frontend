@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Header from '../ucomponents/Header'
 import Footer from '../../Components/Footer'
 import { Link } from 'react-router-dom'
@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { ToastContainer,toast} from 'react-toastify'
 import { getAllBooksApi } from '../../Services/allApis'
+import { searchBookContext } from '../../contextAPI/ContextShare'
 
 
 const Allproducts = () => {
@@ -27,8 +28,8 @@ console.log(books);
  const[allCategories,setAllCategories]=useState([])
 console.log(allCategories);
 
-//search data
-const [searchKey,setSearchKey] = useState("")
+//search data using context
+const {searchkey,setSearchkey} = useContext(searchBookContext)
 
  
   useEffect(()=>{
@@ -38,7 +39,7 @@ const [searchKey,setSearchKey] = useState("")
       //calling getAllBooksApi, when user clicks books from header of home page is directed to allproducts page wiuth search option also
       getAllBooks(usertoken)
     }
-  },[searchKey])
+  },[searchkey])
 
   //fetch all books in all products page , redirected from Home page , when logged in user clicks books link from header of home page.
   const getAllBooks = async(usertoken)=>{
@@ -49,7 +50,7 @@ const [searchKey,setSearchKey] = useState("")
     //error prone
     try{
       //fetch all books for logged in user , as soon as the page is reached to result . Searchkey initailly an emty string
-      const result = await getAllBooksApi(searchKey,reqHeader)
+      const result = await getAllBooksApi(searchkey,reqHeader)
       if(result.status == 200){
         setBooks(result.data)
         //for filter
@@ -111,7 +112,7 @@ const [searchKey,setSearchKey] = useState("")
         <h1 className="text-3xl">Collections</h1>
         {/*Search */}
         <div className="flex my-5">
-           <input type="text" className="p-2 rounded text-black border-gray-200 placeholder-gray-600 border w-100 shadow" placeholder='Search by titles' onChange={e=>setSearchKey(e.target.value)} />
+           <input type="text" value={searchkey} className="p-2 rounded text-black border-gray-200 placeholder-gray-600 border w-100 shadow" placeholder='Search by titles' onChange={e=>setSearchkey(e.target.value)} />
            <button className="bg-blue-900 text-white p-2">Search</button>
         </div>
         </div>
