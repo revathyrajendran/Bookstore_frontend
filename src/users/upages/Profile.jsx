@@ -5,7 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 import { ToastContainer,toast} from 'react-toastify'
-import { addBookApi } from '../../Services/allApis'
+import { addBookApi, getAllUserPurchasedBooksAPI, getAllUserUploadBooksApi, removeUserUploadBookApi } from '../../Services/allApis'
+import Editinprofile from '../ucomponents/Editinprofile'
 
 const Profile = () => {
   //styles for three status
@@ -29,18 +30,116 @@ const Profile = () => {
   //to submit the form , again token is required, this state will bring token here  , initially as an empty string
   const [token,setToken] = useState("")
 
+  //to store all the books sold by the user
+  const[userUploadedBooks, setUserUploadedBooks] = useState([])
+
+  //delete book status
+  const[deleteBookStatus,setDeleteBookStatus]=useState(false)
+
+  //purchased book status
+  const[purchasedBookStatus,setPurchasedBookStatus] = useState([])
+  console.log(purchasedBookStatus);
+
+  //in profile, users can see their profile pic as well as their name
+  const[NameOfLoggedInUser,setNameOfLoggedInUser]=useState("")
+
+  //to store DP of logged in user
+  const[loggedInuserDP,setloggedInUserDp]=useState("")
+  
+
   //every loggedin users will have a token stored in sessionstorage, so it must checked before hand also, useeffect is used for that purpose.
   useEffect(()=>{
     //checking if session storage has any token
-    const storedToken = sessionStorage.getItem("token")
-    if(storedToken){
-      setToken(storedToken)
+    if(sessionStorage.getItem("token")){
+      setToken(sessionStorage.getItem("token"))
+      //user was an object with username as a key , but is stored in sessionstorage as string, it must be converted to object to use it here, so JSON.parse is used.
+      const LoggedInUser = JSON.parse(sessionStorage.getItem("user"))
+       //
+      setNameOfLoggedInUser(LoggedInUser.username)
+      setloggedInUserDp(LoggedInUser.profile)
     }
-
   },[])
   console.log(sessionStorage.getItem("token"));
+
+  console.log(userUploadedBooks);
   
+
+  //bookstatus , when user clicks books status in profile, then all books uploaded by the logged in user  appear , so useeffect is used.Now initialy bookstatus value is false, beacuse whilw we opwn profil, we can see sellbook from , only when user clicks, booskstautus , then only it opens, so here boostatus is the dependency and the fuction here is called based on that . Delete book status is also a dependency heref once user deletes uploaded book, with the updated list it must again be called. Siilarly for purchased status as well
+  useEffect(()=>{
+      if(bookstatus==true){
+        getAllUserUploadedBooks()
+      }else if(purchasedBookStatus== true){
+        getAllUserPurchasedBooks()
+      }
+  },[bookstatus,deleteBookStatus,purchasedBookStatus])
+
+  //Function to see user purchased books
+  const getAllUserPurchasedBooks = async()=>{
+    const reqHeader={
+      "Authorization" :`Bearer ${token}`
+    }
+    try{
+      const result = await getAllUserPurchasedBooksAPI(reqHeader)
+      if(result.status==200){
+             setPurchasedBookStatus(result.data)
+
+      }
+      else{
+        console.log(result);
+        
+      }
+
+    }catch(err){
+      console.log(err);
+      
+    }
+  }
   
+  //Function to delete book from book ststau by the uploaded user from bookstatus
+  const removeUploadedBook = async(bookId)=>{
+    //token is needed here
+    const reqHeader={
+        "Authorization" : `Bearer ${token}`
+    }
+    try{
+      const result = await removeUserUploadBookApi(bookId,reqHeader)
+      if(result.status == 200){
+            toast.success(result.data)
+            setDeleteBookStatus(true)
+      }
+      else{
+        console.log(result);
+        
+      }
+
+    }catch(err){
+      console.log(err);
+      
+    }
+  }
+
+  
+  //grt all user uploaded books, bookstatus of profile component
+  const getAllUserUploadedBooks=async()=>{
+      //token
+      const reqHeader={
+        "Authorization":`Bearer ${token}`
+      }
+      try{
+        const result = await getAllUserUploadBooksApi(reqHeader)
+        if(result.status == 200){
+          setUserUploadedBooks(result.data)
+        }
+        else{
+          console.log(result);
+          
+        }
+
+      }catch(err){
+        console.log(err);
+        
+      }
+  }
   
   //upload image
   const handleUploadBookImage=(e)=>{
@@ -137,20 +236,20 @@ try {
 
          </div>
          <div style={{width:'230px', height:'230px',borderRadius:'50%',marginLeft:'70px',marginTop:'-130px'}} className="bg-white p-3">
-          <img style={{width:'200px', height:'200px',borderRadius:'50%'}} src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="profile" />
+              {/* conditional rendering for userDp, based on if there is any value in loggedInuserDP */}
+          <img style={{width:'200px', height:'200px',borderRadius:'50%'}} src={loggedInuserDP==""?"https://cdn-icons-png.flaticon.com/512/149/149071.png" :loggedInuserDP}alt="profile pic of logged in user" />
          </div>
          {/*name,blue tick ,edit button */}
          <div className="md:flex justify-between px-20 mt-5">
                   <div className="flex justify-center items-center">
                             <h1 className="font-bold md:text-3xl text-2xl">
-                              Username
+                             {NameOfLoggedInUser}
                             </h1>
                             <FontAwesomeIcon className='text-blue-500 ms-3 ' icon={faCircleCheck} />
                   </div>
-                  {/*EDit as a separate component */}
-                  <div>
-                    Edit 
-                  </div>
+                  {/*Editinprofile as a separate component */}
+                     <Editinprofile/>
+                     
          </div>
          {/* paragraph */}
          <p className="md:px-20 px-5 my-2 text-justify">
@@ -285,46 +384,51 @@ try {
           {
             bookstatus && 
             <div className="p-10 my-20 shadow">
-               {/* books to be duplicated */}
-               <div className="p-5 rounded mt-5 bg-gray-100">
-                  <div className="md:grid grid-cols-[3fr_1fr]">
-                    
+               {/* books to be duplicated ,books sold by the users, userbooks sate*/}
+              {
+                userUploadedBooks?.length>0?
+                    userUploadedBooks?.map((book,index)=>(
+                       <div key={index} className="p-5 rounded mt-5 bg-gray-100">
+                   <div className="md:grid grid-cols-[3fr_1fr]">
                      {/* bookstatus */}
                     <div className="px-3">
-                      <h1 className="text-2xl">Book Title</h1>
-                      <h2 className="text-xl">Author</h2>
-                       <h3 className="text-lg text-blue-400">$ 300</h3>
-                       <p className="text-justify">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam porro error eveniet, perspiciatis adipisci optio ea at eligendi numquam culpa laboriosam doloremque iusto, illum rem nihil saepe molestias harum dolore. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed suscipit rerum, corrupti eum veritatis, reiciendis voluptatum placeat tempora pariatur natus repellat sunt corporis explicabo consequuntur expedita quo maiores, doloremque facilis. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo nihil commodi ratione nesciunt vel sit molestiae rerum aspernatur tenetur ipsam, ?</p>
+                      <h1 className="text-2xl">{book?.title}</h1>
+                      <h2 className="text-xl">{book?.author}</h2>
+                       <h3 className="text-lg text-blue-400">$ {book?.discountPrice}</h3>
+                       <p className="text-justify">{book?.abstract}</p>
 
-                       {/*Approved */}
+                       {/* Pending,Approved ,rejected , conditional rendering based on if the book status by admin is approved, rejected or pending. First if its statys is pending is checked  if not then if approved is checked if not automatucally it says rejected.*/}
                        <div className="flex">
                           
-                          <img width={'150px'} height={'150px '} src="https://psdstamps.com/wp-content/uploads/2022/04/round-pending-stamp-png.png" alt="pending" />
-
+                          { book?.status == "Pending"?<img width={'150px'} height={'150px '} src="https://psdstamps.com/wp-content/uploads/2022/04/round-pending-stamp-png.png" alt="pending" />: book?.status == "approved"?
                            
-                          <img width={'100px'} height={'100px '} src="https://pngimg.com/uploads/approved/approved_PNG1.png" alt="approved" />
+                          <img width={'100px'} height={'100px '} src="https://pngimg.com/uploads/approved/approved_PNG1.png" alt="approved" />:
+                          
+                          <img width={'100px'} height={'100px '} src="https://image.similarpng.com/file/similarpng/very-thumbnail/2021/05/Rejected-rubber-stamp-on-transparent-background-PNG.png" alt="rejected" />
+                          }
                          
                        </div>
 
-
-                       
                     </div>
                     {/* delete button and book image */}
                     <div className="px-4 mt-4 md:mt-0">
-                      <img className='w-full' src="https://5.imimg.com/data5/SELLER/Default/2021/9/IM/NZ/XP/133456484/one-arranged-murder-paperback.jpg" alt="book" />
+                      <img className='w-full' src={book?.imageUrl} alt="book uploaded by the user" />
                         <div className="mt-4 flex justify-end">
-                           <button className="bg-red-600 rounded text-white py-2 px-3 mx-3 hover:bg-white hover:text-black hover:border hover:border-red-700">Submit</button>
+                           <button onClick={()=>removeUploadedBook(book?._id)} className="bg-red-600 rounded text-white py-2 px-3 mx-3 hover:bg-white hover:text-black hover:border hover:border-red-700">Delete</button>
                         </div>
-
                     </div>
-          
-                    
-                     
-                    
-                    
                   </div>
-
                </div>
+                    ))
+                  
+                :
+                <div className=" flex justify-center items-center flex-col ">
+                  <img width={'45%'} height={'200px'} src="https://tse2.mm.bing.net/th?id=OIP.iI0fW-U_XmZIeNDUIBoRUQHaEn&pid=15.1" alt="book not uploaded!" />
+                  <p className="font-bold text-xl ">No Books Uploaded yet? Start Uploading your Books Today!!</p>
+                </div>
+               
+
+              }
             </div>
           }
 
@@ -332,25 +436,25 @@ try {
           {
             Purchasestatus && 
             <div className="p-10 my-20 shadow">
-               {/* books to be duplicated */}
-               <div className="p-5 rounded mt-5 bg-gray-100">
+               {/* books to be duplicated , purchased status */}
+               {
+                purchasedBookStatus?.length>0?
+                   purchasedBookStatus?.map((purchasedbook,index)=>(
+                    <div key={index} className="p-5 rounded mt-5 bg-gray-100">
                   <div className="md:grid grid-cols-[3fr_1fr]">
                     
                      {/* bookstatus */}
                     <div className="px-3">
-                      <h1 className="text-2xl">Book Title</h1>
-                      <h2 className="text-xl">Author</h2>
-                       <h3 className="text-lg text-blue-400">$ 300</h3>
-                       <p className="text-justify">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam porro error eveniet, perspiciatis adipisci optio ea at eligendi numquam culpa laboriosam doloremque iusto, illum rem nihil saepe molestias harum dolore. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed suscipit rerum, corrupti eum veritatis, reiciendis voluptatum placeat tempora pariatur natus repellat sunt corporis explicabo consequuntur expedita quo maiores, doloremque facilis. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo nihil commodi ratione nesciunt vel sit molestiae rerum aspernatur tenetur ipsam, ?</p>
+                      <h1 className="text-2xl">{purchasedBookStatus?.title}</h1>
+                      <h2 className="text-xl">{purchasedBookStatus?.author}</h2>
+                       <h3 className="text-lg text-blue-400">$ {purchasedBookStatus?.discountPrice}</h3>
+                       <p className="text-justify">{purchasedBookStatus?.abstract}</p>
 
                        {/*Approved */}
                        <div className="flex">
                           
                           <img width={'150px'} height={'150px '} src="https://psdstamps.com/wp-content/uploads/2022/04/round-sold-stamp-png.png" alt="pending" />
 
-                           
-                          
-                         
                        </div>
 
 
@@ -362,15 +466,20 @@ try {
                         
 
                     </div>
-                    
-          
-                    
-                     
-                    
+  
                     
                   </div>
 
                </div>
+                   ))
+                :
+                <div className=" flex justify-center items-center flex-col ">
+                  <img width={'45%'} height={'200px'} src="https://cdn.dribbble.com/userupload/29471897/file/original-445e7655908c71a77099cdca6b1528e1.gif" alt="book not uploaded!" />
+                  <p className="font-bold text-xl ">No Books Purchased yet? Start Purchasing your Favourite Books Today!!</p>
+                </div>
+               
+
+               }
             </div>
 
           }

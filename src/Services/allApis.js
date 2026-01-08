@@ -22,6 +22,11 @@ import SERVERURL from "./ServerURL"
     
 
 //authorized user api -user
+
+//upload book - this needs reqHeader because data type and authorisation is guven through headers, called by profile component.   --This is an authorized user API call---
+    export const addBookApi=async(reqBody,reqHeader)=>{
+      return await commonApi("POST",`${SERVERURL}/add-book`,reqBody,reqHeader)
+    }
     
 //all books api - to fetch all uploaded books for a logged in user, called by all products component, that when after logging in , a uswer clicks Books link from header of home page , header to pass token of logged in user and this must load as soon as user reached allproducts page with search bar
     export const getAllBooksApi = async(search,reqHeader)=>{
@@ -33,11 +38,24 @@ import SERVERURL from "./ServerURL"
          return await commonApi("GET",`${SERVERURL}/books/${bookId}/view`,{},reqHeader)
     }
 
-
-    //upload book - this needs reqHeader because data type and authorisation is guven through headers, called by profile component.   --This is an authorized user API call---
-    export const addBookApi=async(reqBody,reqHeader)=>{
-      return await commonApi("POST",`${SERVERURL}/add-book`,reqBody,reqHeader)
+    //Get all user upload books - bookstatus whether approved or not by admin, reqheader beacuse it is based on logged in user, called by profile
+    export const getAllUserUploadBooksApi = async(reqHeader)=>{
+      return await commonApi("GET",`${SERVERURL}/user-books`,{},reqHeader)
     }
+
+    //Get all user bought books - purchase history of books bought by the user, reqheader beacuse it is based on logged in user, called by profile
+    export const getAllUserPurchasedBooksAPI = async(reqHeader)=>{
+      return await commonApi("GET",`${SERVERURL}/user-bought-books`,{},reqHeader)
+    }
+
+    //removed books uploaded by user, if they wish to do so, called by profile
+   export const removeUserUploadBookApi = async(bookId,reqHeader)=>{
+      return await commonApi("DELETE",`${SERVERURL}/user-books/${bookId}/remove`,{},reqHeader)
+    }
+
+
+
+    
     
     //profile update
 
