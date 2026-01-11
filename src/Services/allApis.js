@@ -53,11 +53,10 @@ import SERVERURL from "./ServerURL"
       return await commonApi("DELETE",`${SERVERURL}/user-books/${bookId}/remove`,{},reqHeader)
     }
 
-
-
-    
-    
-    //profile update
+    // logged In user profile update
+    export const loggedInUserProfileUpdateApi=async(reqBody ,reqHeader)=>{
+      return await commonApi("PUT",`${SERVERURL}/user-profile/edit`,reqBody,reqHeader)
+    }
 
     //purchased book
     //approved book

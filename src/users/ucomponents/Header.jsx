@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faXTwitter  } from '@fortawesome/free-brands-svg-icons';
@@ -6,10 +6,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { faAddressCard, faUser } from '@fortawesome/free-regular-svg-icons';
 import { faBars, faPowerOff } from '@fortawesome/free-solid-svg-icons';
 import { width } from '@fortawesome/free-solid-svg-icons/faUser';
-
-
-
-
+import ServerURL from '../../Services/ServerURL'
+import { userProfileDetailsUpdateContext } from '../../contextAPI/ContextShare'
 
 const Header = () => {
   const [liststatus,setListStatus]=useState(false)
@@ -21,7 +19,9 @@ const Header = () => {
   const[dropdown,setDropDown]= useState(false)
   //navigate
     const navigate = useNavigate();
-
+ //shareddata coming from edit . here I need state .
+  const{userEditedProfile}= useContext(userProfileDetailsUpdateContext)
+  
 
   //to get  user details on opening the page itself 
   useEffect(()=>{
@@ -34,7 +34,7 @@ const Header = () => {
       setUserDp(user.profile)
     }
 
-  },[token])
+  },[token,userEditedProfile])
   //logout
   const logout = ()=>{
     sessionStorage.clear()
@@ -73,7 +73,7 @@ const Header = () => {
 
           {/*!dropdown means opposite to current value on clicking */}
            <button onClick={()=>setDropDown(!dropdown)} className=' w-full  bg-white px-3 py-2 shadow-xs hover:bg-gray-500'>
-            <img className='mx-2' width={"30px"} height={"30px"} style={{borderRadius:'50%'}} src={userDp==""?"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg":userDp.startsWith("https://lh3.googleusercontent.com/")?userDp:"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg"} alt="userdp" />
+            <img className='mx-2' width={"30px"} height={"30px"} style={{borderRadius:'50%'}} src={userDp==""?"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg":userDp.startsWith("https://lh3.googleusercontent.com/")?userDp:`${ServerURL}/uploads/${userDp}`} alt="userdp" />
            </button>
            {/*dropdown */}
                { dropdown&& <div className='absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'>
@@ -107,7 +107,7 @@ const Header = () => {
 
           {/*!dropdown means opposite to current value on clicking */}
            <button onClick={()=>setDropDown(!dropdown)} className=' w-full  bg-white px-3 py-2 shadow-xs hover:bg-gray-500'>
-            <img className='mx-2' width={"30px"} height={"30px"} style={{borderRadius:'50%'}} src={userDp==""?"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg":userDp.startsWith("https://lh3.googleusercontent.com/")?userDp:"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg"} alt="userdp" />
+            <img className='mx-2' width={"30px"} height={"30px"} style={{borderRadius:'50%'}} src={userDp==""?"https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg":userDp.startsWith("https://lh3.googleusercontent.com/")?userDp:`${ServerURL}/uploads/${userDp}`} alt="userdp" />
            </button>
            {/*dropdown */}
                { dropdown&& <div className='absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'>

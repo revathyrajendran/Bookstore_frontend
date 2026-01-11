@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Header from '../ucomponents/Header'
 import Footer from '../../Components/Footer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -7,6 +7,9 @@ import { faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 import { ToastContainer,toast} from 'react-toastify'
 import { addBookApi, getAllUserPurchasedBooksAPI, getAllUserUploadBooksApi, removeUserUploadBookApi } from '../../Services/allApis'
 import Editinprofile from '../ucomponents/Editinprofile'
+import ServerURL from '../../Services/ServerURL'
+import { userProfileDetailsUpdateContext } from '../../contextAPI/ContextShare'
+
 
 const Profile = () => {
   //styles for three status
@@ -45,9 +48,12 @@ const Profile = () => {
 
   //to store DP of logged in user
   const[loggedInuserDP,setloggedInUserDp]=useState("")
+
+  //shareddata coming from context . here I need state .
+  const{userEditedProfile}= useContext(userProfileDetailsUpdateContext)
   
 
-  //every loggedin users will have a token stored in sessionstorage, so it must checked before hand also, useeffect is used for that purpose.
+  //every loggedin users will have a token stored in sessionstorage, so it must checked before hand also, useeffect is used for that purpose. The entire page loads with userEditedProfile, because it is in dependency.
   useEffect(()=>{
     //checking if session storage has any token
     if(sessionStorage.getItem("token")){
@@ -58,7 +64,7 @@ const Profile = () => {
       setNameOfLoggedInUser(LoggedInUser.username)
       setloggedInUserDp(LoggedInUser.profile)
     }
-  },[])
+  },[userEditedProfile])
   console.log(sessionStorage.getItem("token"));
 
   console.log(userUploadedBooks);
@@ -237,7 +243,7 @@ try {
          </div>
          <div style={{width:'230px', height:'230px',borderRadius:'50%',marginLeft:'70px',marginTop:'-130px'}} className="bg-white p-3">
               {/* conditional rendering for userDp, based on if there is any value in loggedInuserDP */}
-          <img style={{width:'200px', height:'200px',borderRadius:'50%'}} src={loggedInuserDP==""?"https://cdn-icons-png.flaticon.com/512/149/149071.png" :loggedInuserDP}alt="profile pic of logged in user" />
+          <img style={{width:'200px', height:'200px',borderRadius:'50%'}} src={loggedInuserDP==""?"https://cdn-icons-png.flaticon.com/512/149/149071.png" :loggedInuserDP.startsWith("https://lh3.googleusercontent.com/")?loggedInuserDP:`${ServerURL}/uploads/${loggedInuserDP}`}alt="profile pic of logged in user" />
          </div>
          {/*name,blue tick ,edit button */}
          <div className="md:flex justify-between px-20 mt-5">
