@@ -1,11 +1,17 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons'
 
 
 const Adminheader = () => {
+  //logout function
+  const navigate = useNavigate()
+  const logout=()=>{
+    sessionStorage.clear()
+    navigate('/')
+  }
   return (
    <>
        <div className="flex justify-between items-center p-3 md:px-40">
@@ -18,7 +24,7 @@ const Adminheader = () => {
            {/*logout*/}
            <button className='border border-black rounded px-3 py-2 ms-3 hover:bg-black hover:text-white'>
             {" "}
-            <FontAwesomeIcon icon={faPowerOff }  className='me-1'  />Logout{""}
+            <FontAwesomeIcon onClick={logout} icon={faPowerOff }  className='me-1'  />Logout{""}
 
            </button>
          

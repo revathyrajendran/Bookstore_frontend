@@ -65,6 +65,14 @@ import SERVERURL from "./ServerURL"
 //authorized user api -admin
     //add career
     //update admin
-    //list books
-    //list users
+    
+    //list users : token of the admin is sent - called by Resourceadmin component
+    export const getAllUsersListApi=async(reqHeader)=>{
+     return await commonApi("GET",`${SERVERURL}/all-users`,{},reqHeader)
+    }
+
+    //list books : reqHeader is neede here, because it is admin authorized feature
+    export const getAllBooksListForAdminApi = async(reqHeader)=>{
+      return await commonApi("GET",`${SERVERURL}/all-books-admin`,{},reqHeader)
+    }
     //approve books

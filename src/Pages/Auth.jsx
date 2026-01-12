@@ -82,7 +82,7 @@ const handlelogin= async()=>{
 
         //user and admin redirection, only after 2.5 secons
         setTimeout(() => {
-          if(result.data.user.role=="admin"){
+          if(result.data.user.roles=="admin"){
             navigate('/admin-dashboard')
          }else{
             navigate('/')

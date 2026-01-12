@@ -1,14 +1,97 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Footer from '../../Components/Footer'
 import Adminheader from '../../admin/acomponents/Adminheader'
 import Adminsidebar from '../acomponents/Adminsidebar'
+import { getAllBooksListForAdminApi, getAllUsersListApi } from '../../Services/allApis'
+import SERVERURL from '../../Services/ServerURL'
 
 const Resourceadmin = () => {
   //book list
   const[bookliststatus,setBookListStatus]=useState(true)
 
-  //users list
+  //users list: When admin clicks users
   const[usersliststatus,setUsersListStatus]=useState(false)
+
+  //to hold all users list
+  const[allUsersList, setAllUsersList]= useState([])
+
+  //admin token
+  //const[adminToken,setAdminToken]= useState("")
+
+  //to store books
+  const[allUserBooks, setAllUserBooks]= useState([])
+
+  console.log(allUsersList);
+  
+
+  //to bring all users as soona s admin clicks users
+  useEffect(()=>{
+    if(sessionStorage.getItem("token")){
+      const token = sessionStorage.getItem("token")
+      //setAdminToken(token)
+      if(bookliststatus==true){
+        getAllBooksListForAdmin(token)
+
+      }else if(usersliststatus==true){
+        //here yoken is used as a parameter
+         getAllUsersListForAdmin(token)
+        
+      }
+      else{
+        console.log("Something went wrong!!!!");
+       
+        
+      }
+    }
+  },[usersliststatus])
+
+   //function to get all books list for admin , token there is user token here.
+  const getAllBooksListForAdmin = async(userToken)=>{
+    const reqHeader = {
+      "Authorization" : `Bearer ${userToken}`
+    }
+    try{
+      const result = await getAllBooksListForAdminApi(reqHeader)
+      if(result.status == 200){
+          setAllUserBooks(result.data)
+
+      }
+      else{
+        console.log(result);
+        
+      }
+
+    }catch(err){
+      console.log(err);
+      
+
+    }
+
+  }
+
+  //function to get all users list for admin , token there is user token here.
+  const getAllUsersListForAdmin = async(userToken)=>{
+    const reqHeader = {
+      "Authorization" : `Bearer ${userToken}`
+    }
+    try{
+      const result = await getAllUsersListApi(reqHeader)
+      if(result.status == 200){
+          setAllUsersList(result.data)
+
+      }
+      else{
+        console.log(result);
+        
+      }
+
+    }catch(err){
+      console.log(err);
+      
+
+    }
+
+  }
   return (
     <>
         <Adminheader/>
@@ -89,54 +172,32 @@ const Resourceadmin = () => {
                  
               
                <div className="md:grid grid-cols-3 mt-5 w-full">
+                {/* users list in adminresource page */}
               
-               <div className="shadow p-3 rounded m-4 bg-gray-200">
+               { allUsersList?.length>0 ?
+                        allUsersList?.map((user,index)=>(
+                          <div key={index} className="shadow p-1 rounded m-2 bg-gray-200">
 
-                <p className="text-red-700 font-bold text-lg">ID : 6785545678903</p>
+                <p className="text-red-700 font-bold text-lg">ID : {user?._id}</p>
                 
                 <div className='flex mt-5 items-center'>
-                   <img width={'100px'} height={'100px'} style={{borderRadius:'50%'}} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRNPQxt8ZLNHXp6jkHGmadRYrCKGE53w9ufg&s"  alt="" />
-                    <div className="flex flex-col  text-lg ml-6">
+                   <img width={'100px'} height={'100px'} style={{borderRadius:'50%'}} src={user?.profile?`${SERVERURL}/uploads/${user.profile}`:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRNPQxt8ZLNHXp6jkHGmadRYrCKGE53w9ufg&s" } alt="" />
+                    <div className="flex flex-col  text-lg ml-3 w-full">
                       
-                      <p className='text-blue-800'>Username</p>
-                      <p>$ 250</p>
+                      <p className='text-blue-800 text-lg font-bold'>{user?.username}</p>
+                      <p>{user?.email}</p>
                       
                      </div>
             
                   </div>
                 </div>
+                        ))
+                :
+                <div className='text-center text-bold'>No Users</div>
 
-                <div className="shadow p-3 rounded m-4 bg-gray-200">
 
-                <p className="text-red-700 font-bold text-lg">ID : 6785545678903</p>
-                
-                <div className='flex mt-5 items-center'>
-                   <img width={'100px'} height={'100px'} style={{borderRadius:'50%'}} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRNPQxt8ZLNHXp6jkHGmadRYrCKGE53w9ufg&s"  alt="" />
-                    <div className="flex flex-col  text-lg ml-6">
-                      
-                      <p className='text-blue-800'>Username</p>
-                      <p>$ 250</p>
-                      
-                     </div>
-            
-                  </div>
-                </div>
+                }
 
-                <div className="shadow p-3 rounded m-4 bg-gray-200">
-
-                <p className="text-red-700 font-bold text-lg">ID : 6785545678903</p>
-                
-                <div className='flex mt-5 items-center'>
-                   <img width={'100px'} height={'100px'} style={{borderRadius:'50%'}} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRNPQxt8ZLNHXp6jkHGmadRYrCKGE53w9ufg&s"  alt="" />
-                    <div className="flex flex-col  text-lg ml-6">
-                      
-                      <p className='text-blue-800'>Username</p>
-                      <p>$ 250</p>
-                      
-                     </div>
-            
-                  </div>
-                </div>
 
                 
                 </div>
