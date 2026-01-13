@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import Footer from '../../Components/Footer'
 import Adminheader from '../../admin/acomponents/Adminheader'
 import Adminsidebar from '../acomponents/Adminsidebar'
-import { getAllBooksListForAdminApi, getAllUsersListApi } from '../../Services/allApis'
+import { getAllBooksListForAdminApi, getAllUsersListApi, updateBookByAdminApi } from '../../Services/allApis'
 import SERVERURL from '../../Services/ServerURL'
 
 const Resourceadmin = () => {
-  //book list
+  //book list : When admin clicks Books
   const[bookliststatus,setBookListStatus]=useState(true)
 
   //users list: When admin clicks users
@@ -21,7 +21,11 @@ const Resourceadmin = () => {
   //to store books
   const[allUserBooks, setAllUserBooks]= useState([])
 
+  //once admin approve the books, again it has to be called in useeffect to load books, the book approved will now have a tick mark
+  const[updateBookStatus,setUpdateBookStatus] = useState({})
+
   console.log(allUsersList);
+  console.log(allUserBooks);
   
 
   //to bring all users as soona s admin clicks users
@@ -43,7 +47,8 @@ const Resourceadmin = () => {
         
       }
     }
-  },[usersliststatus])
+    //updateBookStatus is in dependency because otherwise no refreshing.
+  },[usersliststatus,updateBookStatus])
 
    //function to get all books list for admin , token there is user token here.
   const getAllBooksListForAdmin = async(userToken)=>{
@@ -92,6 +97,24 @@ const Resourceadmin = () => {
     }
 
   }
+
+  //to approve books by admin
+  const approveBook = async(book)=>{
+    const tokenOfAdmin = sessionStorage.getItem("token")
+    const reqHeader = {
+      "Authorization" : `Bearer ${tokenOfAdmin}`
+    }
+    try{
+      const result = await updateBookByAdminApi(book,reqHeader)
+      if(result.status==200){
+        setUpdateBookStatus(result.data)
+      }
+
+    }catch(err){
+      console.log(err);
+      
+    }
+  }
   return (
     <>
         <Adminheader/>
@@ -118,49 +141,48 @@ const Resourceadmin = () => {
               bookliststatus &&
               
                <div className="md:grid grid-cols-4 mt-5 w-full">
-               <div className="shadow p-3 rounded m-4">
-                  <img width={'100%'} height={'300px'} src="https://5.imimg.com/data5/SELLER/Default/2021/9/IM/NZ/XP/133456484/one-arranged-murder-paperback.jpg" alt="" />
+                {/* Book list to be repeated!!!!! */}
+              
+              {
+                allUserBooks?.length>0?
+                allUserBooks?.map(book=>(
+                  <div key={book?._id} className="shadow p-3 rounded m-4">
+                  <img width={'100%'} height={'300px'} src={book?.imageUrl} alt="" />
                   <div className="flex flex-col justify-center align-center">
-                    <p className="text-blue-700 font-bold text-lg">Author</p>
-                    <p>BookTitle</p>
-                    <p>$ 250</p>
-                    
-            
+                    <p className="text-blue-700 font-bold text-lg">{book?.author}</p>
+                    <p>{book?.title}</p>
+                    <p>$ {book?.discountPrice}</p>
+                      {/* Button to approve by admin , if admin clicked approve button , then it must change to tick : so conditional rendering  based on book status if pending, sold ! If admin has approved the book, in admin resources the approve button must vanish and tick must come. */}
+                 {  
+                 book?.status == 'Pending' && 
+                 //we mapped using book, so it is passed here also
+                <button onClick={()=>approveBook(book)} className="p-3 bg-green-700 border rounded w-full text-white hover:border-green-600 hover:bg-white hover:text-green-800">
+                           Approve
+                    </button>
+                  }
+                  {  
+                 book?.status == 'approved' && 
+                <div className="flex justify-end w-full">
+                  <img width={'40px'} height={'40px'} className='text-center' src="https://png.pngtree.com/png-vector/20221215/ourmid/pngtree-green-check-mark-png-image_6525691.png" alt="Tick mark after approval" />
+                          
+                </div>
+                  }
                   </div>
+                   
+                 
+
+                </div>
+                ))
+                :
+                <div>
+                  <p className="text-dark font-bold text-lg">No Books Uploaded By Users</p>
                 </div>
 
-                 <div className="shadow p-3 rounded m-4">
-                  <img width={'100%'} height={'300px'} src="https://5.imimg.com/data5/SELLER/Default/2021/9/IM/NZ/XP/133456484/one-arranged-murder-paperback.jpg" alt="" />
-                  <div className="flex flex-col justify-center align-center">
-                    <p className="text-blue-700 font-bold text-lg">Author</p>
-                    <p>BookTitle</p>
-                    <p>$ 250</p>
-                    
-            
-                  </div>
-                </div>
+                
+              }
 
-                 <div className="shadow p-3 rounded m-4">
-                  <img width={'100%'} height={'300px'} src="https://5.imimg.com/data5/SELLER/Default/2021/9/IM/NZ/XP/133456484/one-arranged-murder-paperback.jpg" alt="" />
-                  <div className="flex flex-col justify-center align-center">
-                    <p className="text-blue-700 font-bold text-lg">Author</p>
-                    <p>BookTitle</p>
-                    <p>$ 250</p>
-                    
-            
-                  </div>
-                </div>
-
-                 <div className="shadow p-3 rounded m-4">
-                  <img width={'100%'} height={'300px'} src="https://5.imimg.com/data5/SELLER/Default/2021/9/IM/NZ/XP/133456484/one-arranged-murder-paperback.jpg" alt="" />
-                  <div className="flex flex-col justify-center align-center">
-                    <p className="text-blue-700 font-bold text-lg">Author</p>
-                    <p>BookTitle</p>
-                    <p>$ 250</p>
-                    
-            
-                  </div>
-                </div>
+               
+                
                 </div>
             }
                      {/*Users */}

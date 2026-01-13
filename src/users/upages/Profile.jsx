@@ -403,14 +403,14 @@ try {
                        <h3 className="text-lg text-blue-400">$ {book?.discountPrice}</h3>
                        <p className="text-justify">{book?.abstract}</p>
 
-                       {/* Pending,Approved ,rejected , conditional rendering based on if the book status by admin is approved, rejected or pending. First if its statys is pending is checked  if not then if approved is checked if not automatucally it says rejected.*/}
+                       {/* Pending,Approved ,rejected , conditional rendering based on if the book status by admin is approved, rejected or pending. First if its statys is pending is checked  if not then if approved is checked if not automatucally it says sold someone bought it.*/}
                        <div className="flex">
                           
                           { book?.status == "Pending"?<img width={'150px'} height={'150px '} src="https://psdstamps.com/wp-content/uploads/2022/04/round-pending-stamp-png.png" alt="pending" />: book?.status == "approved"?
                            
                           <img width={'100px'} height={'100px '} src="https://pngimg.com/uploads/approved/approved_PNG1.png" alt="approved" />:
                           
-                          <img width={'100px'} height={'100px '} src="https://image.similarpng.com/file/similarpng/very-thumbnail/2021/05/Rejected-rubber-stamp-on-transparent-background-PNG.png" alt="rejected" />
+                          <img width={'100px'} height={'100px '} src="https://psdstamps.com/wp-content/uploads/2022/04/round-sold-stamp-png.png" alt="sold" />
                           }
                          
                        </div>

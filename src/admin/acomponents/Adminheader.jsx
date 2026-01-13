@@ -22,9 +22,9 @@ const Adminheader = () => {
          </div >
           
            {/*logout*/}
-           <button className='border border-black rounded px-3 py-2 ms-3 hover:bg-black hover:text-white'>
+           <button onClick={logout} className='border border-black rounded px-3 py-2 ms-3 hover:bg-black hover:text-white'>
             {" "}
-            <FontAwesomeIcon onClick={logout} icon={faPowerOff }  className='me-1'  />Logout{""}
+            <FontAwesomeIcon  icon={faPowerOff }  className='me-1'  />Logout{""}
 
            </button>
          

@@ -75,4 +75,7 @@ import SERVERURL from "./ServerURL"
     export const getAllBooksListForAdminApi = async(reqHeader)=>{
       return await commonApi("GET",`${SERVERURL}/all-books-admin`,{},reqHeader)
     }
-    //approve books
+    //approve books by admin , calleed by resourceadmin page when admin clicks approve button.
+    export const updateBookByAdminApi = async(reqBody,reqHeader)=>{
+      return await commonApi("PUT",`${SERVERURL}/admin/book/approve`,reqBody,reqHeader)
+    }

@@ -148,7 +148,7 @@ const {searchkey,setSearchkey} = useContext(searchBookContext)
        
         </div>
 
-        {/*After filter , Books*/}
+        {/*After filter , Books. But this should be seen when a logged in user clicks books in header of home page. Only books approved by the admin must be loaded, not every books , so hidden class is used  */}
         <div className="col-span-3">
           <div className="md:grid grid-cols-4 gap-1 mt-5 md:mt-0">
                   
@@ -156,7 +156,7 @@ const {searchkey,setSearchkey} = useContext(searchBookContext)
                     books.length>0?
                     books.map(book=>(
                       
-             <div key={book?._id} className="shadow p-3 rounded mx-2">
+             <div key={book?._id} className="shadow p-3 rounded mx-2" hidden={book?.status == 'Pending' ||  book?.status == ''}>
                   <img width={'100%'} height={'300px'} src={book?.imageUrl} alt="Uploaded Book Image" />
                   <div className="flex flex-col justify-center align-center">
                     <p className="text-blue-700 font-bold text-lg">{book?.author.slice(0,20)}...</p>

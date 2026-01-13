@@ -25,7 +25,7 @@ const Adminsidebar = () => {
             </div>
   
             <div className="mt-3">
-              <Link to={'/admin-resource'}> <FontAwesomeIcon icon={faBook} className='me-2' />Resources</Link>
+              <Link to={'/admin-resource'}> <FontAwesomeIcon icon={faBook} className='me-2' />Collections</Link>
               
               
             </div>
