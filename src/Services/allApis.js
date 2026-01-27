@@ -1,6 +1,11 @@
 import commonApi from "./commonAPI"
 import SERVERURL from "./ServerURL"
 //guest api
+
+//unauthoized userr: admin or other wise no need to login to see all jobs uploaded by admin, so no body and heder. serach kley and search for search feature
+export const seeAllJobsByNotLoggedInuser= async(searchkey)=>{
+  return await commonApi("GET",`${SERVERURL}/all-jobs?search=${searchkey}`)
+}
 //register api - called by Auth component when register button is clicked
      export const registerApi=async(reqBody)=>{
         return await commonApi("POST",`${SERVERURL}/register`,reqBody)//for register , no header needed.
@@ -15,7 +20,7 @@ import SERVERURL from "./ServerURL"
         return await commonApi("POST",`${SERVERURL}/google-login`,reqBody)//for register , no header needed.
      }
 
-    //home page books api - to fetch all uploaded bpoks from books collection, calld by home component of users
+    // HOME PAGE API - home page books api - to fetch all uploaded bpoks from books collection, calld by home component of users
     export const getBooksUploadedByUsers = async()=>{
       return await commonApi("GET",`${SERVERURL}/home-books`)
     }
@@ -28,7 +33,7 @@ import SERVERURL from "./ServerURL"
       return await commonApi("POST",`${SERVERURL}/add-book`,reqBody,reqHeader)
     }
     
-//all books api - to fetch all uploaded books for a logged in user, called by all products component, that when after logging in , a uswer clicks Books link from header of home page , header to pass token of logged in user and this must load as soon as user reached allproducts page with search bar
+//  all books api - to fetch all uploaded books for a logged in user, called by all products component, that when after logging in , a uswer clicks Books link from header of home page , header to pass token of logged in user and this must load as soon as user reached allproducts page with search bar
     export const getAllBooksApi = async(search,reqHeader)=>{
          //search is a key which holds value of search variable same as is in argument
       return await commonApi("GET",`${SERVERURL}/all-books?search=${search}`,{},reqHeader)
@@ -78,4 +83,19 @@ import SERVERURL from "./ServerURL"
     //approve books by admin , calleed by resourceadmin page when admin clicks approve button.
     export const updateBookByAdminApi = async(reqBody,reqHeader)=>{
       return await commonApi("PUT",`${SERVERURL}/admin/book/approve`,reqBody,reqHeader)
+    }
+
+    //update admin profile
+    export const updateAdminProfileApi = async(reqBody,reqHeader)=>{
+      return await commonApi("PUT" , `${SERVERURL}/admin-edit/profile`,reqBody,reqHeader)
+    }
+
+    //add job api BY admin
+    export const addJobByAdminAPI = async(reqBody,reqHeader)=>{
+       return await commonApi("POST",`${SERVERURL}/admin-add-job`,reqBody,reqHeader)
+    }
+
+    //remove added job api
+    export const removeJobByAdminAPI = async(jobID,reqHeader)=>{
+       return await commonApi("DELETE",`${SERVERURL}/job/${jobID}/remove`,{},reqHeader)
     }

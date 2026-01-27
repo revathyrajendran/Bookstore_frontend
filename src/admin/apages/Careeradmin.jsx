@@ -6,12 +6,73 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUpRightFromSquare, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons/faLocationDot'
 import { Link } from 'react-router-dom'
+import AddJob from '../acomponents/AddJob'
+import { useEffect } from 'react'
+import { removeJobByAdminAPI, seeAllJobsByNotLoggedInuser } from '../../Services/allApis'
 
 
 const Careeradmin = () => {
   //job list
   const[jobListStatus,setJobListStatus]=useState(true)
   const[listApplicationStatus,setListApplicationStatus]=useState(false)
+  //state to store all jobs added by admin for admin to view in admin's career page.
+  const[allJobs,setAllJobs]=useState([])
+  //state to keep search key
+  const[searchKey,setSearchKey]=useState("")
+  //whenever admin deletes a job, the rest of the jobs must be seen, so useeffect must render again for that the below state
+  const[deleteJobResponse,setDeleteJobResponse]=useState({})
+
+
+  console.log(allJobs);
+  //useffect must render when search input vaue changes, or when admin deleted an uploaded job , sod ependency has two values.
+  useEffect(()=>{
+    if(jobListStatus==true){
+      getAllJobsForAdmin()
+    }
+
+  },[searchKey,deleteJobResponse])
+
+
+  
+ //see all jobs by admin in carree page of admin
+  const getAllJobsForAdmin= async()=>{
+    try{
+      const result = await seeAllJobsByNotLoggedInuser(searchKey)
+      if(result.status==200){
+        setAllJobs(result.data)
+      }
+
+    }catch(err){
+     console.log(err);
+     
+    }
+
+  }
+
+  //delete a job by admin
+  const handleremoveJob = async(id)=>{
+    
+    const token = sessionStorage.getItem("token")
+    if(token){
+      const reqHearder={
+        "Authorization":`Bearer ${token}`
+      }
+      try{
+        const result = await removeJobByAdminAPI(id,reqHearder)
+        if(result.status==200){
+          setDeleteJobResponse(result.data)
+        }else{
+          console.log(result);
+          
+        }
+
+      }catch(err){
+        console.log(err);
+        
+      }
+    }
+
+  }
   return (
    <>
         <Adminheader/>
@@ -41,34 +102,41 @@ const Careeradmin = () => {
                       <div className="flex my-5 justify-between items-center my-10">
           {/* search button */}
                   <div>
-                    <input type="text" className="p-2 rounded text-black border-gray-200 placeholder-gray-600 border w-100 shadow" placeholder='Search By Job Title' />
+                    <input onChange={e=>setSearchKey(e.target.value)} type="text" className="p-2 rounded text-black border-gray-200 placeholder-gray-600 border w-100 shadow" placeholder='Search By Job Title' />
                     <button className="bg-blue-900 text-white p-2">Search</button>
                   </div>
-           {/* Add button */}
-                  <div>
-                    Add
-                  </div>
+           {/* Add  component as self closing tag */}
+           <AddJob/>
+                  
 
                        </div>
-                       {/* job to be duplicated */}
-                       <div className="border border-gray-200 p-5 shadow my-5">
+                       {/* job to be duplicated  based on if there is any value in alljobs*/}
+                       {
+                        allJobs?.length>0?
+                        allJobs?.map(job=>(
+                          <div key={job?._id} className="border border-gray-200 p-5 shadow my-5">
                <div className="flex mb-5 ">
                   <div className='w-full' >
-                        <h1 className="text-xl font-bold">Hr Assistant</h1>
+                        <h1 className="text-xl font-bold">{job?.title}</h1>
                         <hr />
                   </div>
-                   <button onClick={()=>setModalStatus(true)} className="bg-red-700 text-white ms-5 p-2 flex items-center">Delete <FontAwesomeIcon className='ms-1' icon={faTrash} /></button>
+                   <button onClick={()=>handleremoveJob(job?._id)} className="bg-red-700 text-white ms-5 p-2 flex items-center">Delete <FontAwesomeIcon className='ms-1' icon={faTrash} /></button>
                </div>
                {/*Job description */}
-               <p className='text-lg text-blue-700 my-2'> <FontAwesomeIcon  icon={faLocationDot} />Kochi</p>
-               <p className='text-lg my-2'> Job Type: Full time</p>
-               <p className='text-lg my-2'> Salary : 20000-30000/month</p>
-               <p className='text-lg my-2'> Qualification :  </p>
-               <p className='text-lg my-2'> Experience : 1-2 years</p>
-              <p className='text-lg my-2'> Description : Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus provident accusamus exercitationem adipisci, eius libero inventore, doloremque officia veritatis cum et praesentium minima at atque fugit doloribus molestiae consectetur? Et. </p>
+               <p className='text-lg text-blue-700 my-2'> <FontAwesomeIcon  icon={faLocationDot} />{job?.location}</p>
+               <p className='text-lg my-2'> Job Type: {job?.type}</p>
+               <p className='text-lg my-2'> Salary : {job?.salary}</p>
+               <p className='text-lg my-2'> Qualification : {job?.qualification} </p>
+               <p className='text-lg my-2'> Experience : {job?.experience}</p>
+              <p className='text-lg my-2'> Description : {job?.description} </p>
                 
 
-        </div>
+                       </div>
+                        ))
+                        :
+                        <p className="text-bold text-center text-lg">No Current Openings!!!!</p>
+                       }
+                       
            
                     </div> 
           

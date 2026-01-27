@@ -19,10 +19,11 @@ const Allproducts = () => {
  
  //books when user clicks books from home page and is directed to allproducts page
  const[books,setBooks]=useState([])
+ console.log(books);
+
 
  //temporary book array for filtering
  const[tempBooks,setTempBooks] = useState([])
-console.log(books);
 
  //array to keep categories for filtering : because writing code for all categories is a difficut task here
  const[allCategories,setAllCategories]=useState([])

@@ -27,7 +27,7 @@ const Viewbook = () => {
   
   //to view a book , this function does not need to use id as an argument because, already we have declared the variable using use params, so can be accessed anywhere in the component.
   const viewBookDetails = async()=>{
-    //Here usestate is not used for teoken , instead just if else statement is used.
+    //Here usestate is not used for token , instead just if else statement is used.
     const token = sessionStorage.getItem("token")
     if(token){
       //defining reqheader

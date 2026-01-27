@@ -12,12 +12,12 @@ function Editinprofile() {
 
   //steps For profile pic , Create a state to bring excisting profile from session storage of a logged in user.   Then create a preview state for URL creation
 
-  //edit canvas status , initially false
+  //edit canvas status , initially false , becomes true onlyt when user clicks edit button.
   const[editCanvasStatus, setEditCanvasStatus]=useState(false)
 
   //to store details of inputs in edit component. profile is not for holding excisting pictue, but to hold updated picture
     const[userDetails,setUserDetails]=useState({username:"",password:'',cpassword:"",bio:"",profile:"",roles:""})
-  //to hold excisting profile pic of the user. This was to avaoid unnecessary confusion
+  //to hold excisting profile pic of the user. This was to avoid unnecessary confusion
   const[usersExcistingProfile,setUsersExcistingProfile]= useState("")
 
     //token
@@ -94,9 +94,10 @@ function Editinprofile() {
           
           const result = await loggedInUserProfileUpdateApi(reqBody,reqHeader)
           if(result.status == 200){
-            //toast.success("Profile Updation successful!!!!")
-            //users is stored as  string in session storage
+            toast.success("Profile Updation successful!!!!")
+            //users is stored as  string back  in session storage after updation if any updation is done
             sessionStorage.setItem("user",JSON.stringify(result.data))
+            setUsersExcistingProfile(result.data.profile)
             handleReset()
             setEditCanvasStatus(false)
             setUserEditedProfile(result.data)
@@ -108,15 +109,15 @@ function Editinprofile() {
         }
         //If no preview, or if user has not updated the profile picture
         else{
-          //if user has not updated or edited the profile pic, thrn profile key will have excisting profile value.
+          //if user has not updated or edited the profile pic, then profile key will have excisting profile value.
           const result = await loggedInUserProfileUpdateApi({username,password,bio,roles,profile:usersExcistingProfile},reqHeader)
           if(result.status == 200){
-            toast.success("Profile Updation successful!!!!")
+            //toast.success("Profile Updation successful!!!!")
             //users is stored as  string in session storage
             sessionStorage.setItem("user",JSON.stringify(result.data))
             handleReset()
             setEditCanvasStatus(false)
-            setUserEditedProfile(result.data)
+            
           }else{
             toast.error("Something went wrong!!!!!")
             console.log(result);

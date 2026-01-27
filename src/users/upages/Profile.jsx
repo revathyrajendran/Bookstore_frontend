@@ -33,7 +33,7 @@ const Profile = () => {
   //to submit the form , again token is required, this state will bring token here  , initially as an empty string
   const [token,setToken] = useState("")
 
-  //to store all the books sold by the user
+  //to store all the books sold by the t
   const[userUploadedBooks, setUserUploadedBooks] = useState([])
 
   //delete book status
@@ -49,7 +49,7 @@ const Profile = () => {
   //to store DP of logged in user
   const[loggedInuserDP,setloggedInUserDp]=useState("")
 
-  //shareddata coming from context . here I need state .
+  //shareddata coming from context . here I need state only
   const{userEditedProfile}= useContext(userProfileDetailsUpdateContext)
   
 
@@ -163,7 +163,7 @@ const Profile = () => {
     setPreviewList(bookImgArray)
   }
 
-  //function to handle clearing all fileds in handlesubmitt after adding books
+  //function to handle clearing all fileds in form after adding books
   const handleReset =()=>{
     setBookDetails({
       //make the field empty 
@@ -181,7 +181,7 @@ const Profile = () => {
 const {title, author, noOfPages, imageUrl, Price,discountPrice, abstract, publisher, language, isbn, category, uploadImges} = bookDetails
  //checking if all fields are filled
 if(!title || !author || !noOfPages ||!imageUrl ||!Price || !discountPrice ||!abstract || !publisher || !language || !isbn || !category || uploadImges.length==0){
-//alerting using toasdtify if feilds are not fields
+//alerting using toastify if  fields are not filled
 toast.info("Please fill the form!!!")
 }else{
 

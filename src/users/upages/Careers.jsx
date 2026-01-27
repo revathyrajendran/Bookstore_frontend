@@ -1,14 +1,42 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../ucomponents/Header'
 import Footer from '../../Components/Footer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUpRightFromSquare, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons/faLocationDot'
+import { seeAllJobsByNotLoggedInuser } from '../../Services/allApis'
 
 
 
 const Careers = () => {
   const[modalstatus,setModalStatus]= useState(false)
+  //users to see jobs,state to holdall jobs uploaded by admin
+  const[allJobsForUser,setAllJobsForUser]=useState([])
+
+  //search key 
+  const[searchKey,setSearchKey]=useState("")
+
+  //as soon as the page is opened it must load all the job for user. similarly when the user search , then also it must load so useeffect is used.
+  useEffect(()=>{
+    getAllJobs()
+  },[searchKey])
+
+
+  //function to display all jobs in user career pages,even unauthorized user can see this page , so nothing to take as parameter
+  const getAllJobs=async()=>{
+    try{
+      const result = await seeAllJobsByNotLoggedInuser(searchKey)
+      if(result.status == 200){
+        setAllJobsForUser(result.data)
+      }else{
+        console.log(result);
+        
+      }
+
+    }catch(err){
+      res.status(500).json(err) 
+    }
+  }
   return (
     <>
     <Header/>
@@ -24,30 +52,38 @@ const Careers = () => {
          {/*search bar */}
         <div className="flex justify-center items-center my-10">
           <div className="flex my-5">
-           <input type="text" className="p-2 rounded text-black border-gray-200 placeholder-gray-600 border w-100 shadow" placeholder='Job Title' />
+           <input onChange={e=>setSearchKey(e.target.value)} type="text" className="p-2 rounded text-black border-gray-200 placeholder-gray-600 border w-100 shadow" placeholder='Job Title' />
            <button className="bg-green-900 text-white p-2">Search</button>
         </div>
 
         </div>
-        {/*Jobs to be duplicated */}
-        <div className="border border-gray-200 p-5 shadow my-5">
+        {/*Jobs to be duplicated : conditional rendering based on alljobsfor users state*/}
+       {
+        allJobsForUser?.length>0?
+            allJobsForUser?.map(job=>(
+               <div key={job?._id} className="border border-gray-200 p-5 shadow my-5">
                <div className="flex mb-5 ">
                   <div className='w-full' >
-                        <h1 className="text-xl">Hr Assistant</h1>
+                        <h1 className="text-xl">{job?.title}</h1>
                         <hr />
                   </div>
                    <button onClick={()=>setModalStatus(true)} className="bg-green-900 text-white ms-5 p-2 flex items-center">Apply <FontAwesomeIcon className='ms-1' icon={faArrowUpRightFromSquare} /></button>
                </div>
                {/*Job description */}
-               <p className='text-lg my-2'> <FontAwesomeIcon  icon={faLocationDot} />Kochi</p>
-               <p className='text-lg my-2'> Job Type: Full time</p>
-               <p className='text-lg my-2'> Salary : 20000-30000/month</p>
-               <p className='text-lg my-2'> Qualification :  </p>
-               <p className='text-lg my-2'> Experience : 1-2 years</p>
-              <p className='text-lg my-2'> Description : </p>
+               <p className='text-lg my-2'> <FontAwesomeIcon  icon={faLocationDot} />{job?.location}</p>
+               <p className='text-lg my-2'> Job Type: {job?.type}</p>
+               <p className='text-lg my-2'> Salary : {job?.salary}</p>
+               <p className='text-lg my-2'> Qualification : {job?.qualification}</p>
+               <p className='text-lg my-2'> Experience : {job?.experience}</p>
+              <p className='text-lg my-2'> Description :{job?.description} </p>
                 
 
         </div>
+            ))
+        :
+        <p className="text-center text-bold text-lg">No Current Openings!!!!!</p>
+
+       }
       </div>
 
     </div>
