@@ -63,6 +63,13 @@ export const seeAllJobsByNotLoggedInuser= async(searchkey)=>{
       return await commonApi("PUT",`${SERVERURL}/user-profile/edit`,reqBody,reqHeader)
     }
 
+    //logged in user to apply for a job , called by career component of users
+    export const userApplyJobApi=async(reqBody,reqHeader)=>{
+      return await commonApi("POST",`${SERVERURL}/user-application/add`,reqBody,reqHeader)
+
+    }
+    
+
     //purchased book
     //approved book
 
@@ -93,6 +100,11 @@ export const seeAllJobsByNotLoggedInuser= async(searchkey)=>{
     //add job api BY admin
     export const addJobByAdminAPI = async(reqBody,reqHeader)=>{
        return await commonApi("POST",`${SERVERURL}/admin-add-job`,reqBody,reqHeader)
+    }
+
+    //users might have applied to various jobs, admin must see who all have applied in applications, called by admin Career component
+    export const getAllUserApplicationsAPI = async(reqHeader)=>{
+      return await commonApi("GET",`${SERVERURL}/all-applications/admin`,{},reqHeader)
     }
 
     //remove added job api

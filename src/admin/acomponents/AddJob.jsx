@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus,faXmark } from '@fortawesome/free-solid-svg-icons'
 import { ToastContainer,toast} from 'react-toastify'
 import { addJobByAdminAPI } from '../../Services/allApis'
+import { JobContext } from '../../contextAPI/ContextShare'
 
 function AddJob() {
+  //data shared from AddJob component to careeradamin page
+  const {addJobResponse,setAddJobResponse}= useContext(JobContext)
   //Modal to add Job by admin, whether modal is open or not
   const[addJobmodalStatus,setAddJobModalStatus]=useState(false)
 
@@ -30,13 +33,25 @@ function AddJob() {
     }else if(token){
         const reqHeader = {
       //Token was fetched and set in the varibale , then used here
-      "Authorization" :`Bearer ${usertoken}`
+      "Authorization" :`Bearer ${token}`
     }
       //api call
       try{
-        const result = await addJobByAdminAPI(reqHeader)
+        const result = await addJobByAdminAPI(newJobDetails,reqHeader)
         if(result.status==200){
-          
+          //alert job added using toastify
+           toast.success("New Job Opening Added Successfully!!!!")
+          //close modal
+          setAddJobModalStatus(false)
+          //reset form
+          handleReset()
+          //share data to context
+          setAddJobResponse(result.data)
+        }else if(result.status==409){
+          toast.warning(result.response.data)
+          handleReset()
+        }else{
+           toast.warning("Something went wrong!!!!")
         }
 
       }catch(err){
@@ -64,7 +79,7 @@ function AddJob() {
                           {/*Modal header */}
                           <div className='bg-black text-white flex justify-between items-center p-3 text-xl'>
                             <h3>New Job Opening Form</h3>
-                            <FontAwesomeIcon onClick={()=>setModalStatus(false)} icon={faXmark}/>
+                            <FontAwesomeIcon onClick={()=>setAddJobModalStatus(false)} icon={faXmark}/>
                           </div>
                            {/*Modal body */}
       
@@ -105,7 +120,7 @@ function AddJob() {
                               <div className="bg-gray-200 p-3  w-full flex justify-end">
                                 <button onClick={handleReset} className="bg-orange-500 text-white py-2 px-3 mx-3">Reset</button>
 
-                                <button className="bg-green-600 text-white py-2 px-3 mx-3">Add</button>
+                                <button  onClick={handleAddJob} className="bg-green-600 text-white py-2 px-3 mx-3">Add</button>
                                    
                               </div>
                             

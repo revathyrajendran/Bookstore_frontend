@@ -9,6 +9,9 @@ export const userProfileDetailsUpdateContext = createContext("")
 //admin profile edit data, beacuse in sidebars also in every admin components, the edited data must be seen
 export const adminProfileDetailsUpdateContext = createContext("")
 
+//AddJob is another component in admin side , which is but accessed usng addJob button in carres admin page, so after adding job , it must be shown in career page of admin
+export const JobContext = createContext("")
+
 
 //children is predefined attribute
 
@@ -21,13 +24,20 @@ function ContextShare({children}) {
 
      //the data needs to be common angong side bars of all admin pages
      const [adminEditedProfile,setAdminEditedProfile]=useState({})
+
+     //state which indicates if the job is added succesfully or not is shared from Addjob component to career admin component
+     const [addJobResponse,setAddJobResponse]=useState("")
      
 //value here accepts only objects, so yellow braces, now since the state is a part of js,blue braces so two braces {{}}
   return (
    
     <searchBookContext.Provider value={{searchkey,setSearchKey}}>
       <userProfileDetailsUpdateContext.Provider value={{userEditedProfile,setUserEditedProfile}}>
-             <adminProfileDetailsUpdateContext.Provider value={{adminEditedProfile,setAdminEditedProfile}}>     {children}  </adminProfileDetailsUpdateContext.Provider>
+             <adminProfileDetailsUpdateContext.Provider value={{adminEditedProfile,setAdminEditedProfile}}>    
+                   <JobContext.Provider value={{addJobResponse,setAddJobResponse}}>
+                            {children}
+                    </JobContext.Provider>
+                </adminProfileDetailsUpdateContext.Provider>
       </userProfileDetailsUpdateContext.Provider>
     </searchBookContext.Provider>
   )
