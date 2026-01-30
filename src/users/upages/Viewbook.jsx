@@ -8,6 +8,8 @@ import { Link, useParams } from 'react-router-dom'
 import { ToastContainer,toast} from 'react-toastify'
 import { getASingleBookApi } from '../../Services/allApis'
 import SERVERURL from '../../Services/ServerURL'
+//buying imports
+import {loadStripe} from '@stripe/stripe-js';
 
 const Viewbook = () => {
   const[modalstatus,setModalStatus]= useState(false)
@@ -53,6 +55,17 @@ const Viewbook = () => {
     }
 
   }
+
+  //payment option, loadStripe is synchronous
+  const handlePayment=async()=>{
+    console.log("Inside handlePayment!");
+    //stripe object , pk_test_ is copied from stripe.com after sign in
+    const stripe = await loadStripe('pk_test_51SvCnM2FRWxWdt4UC5xocClYRIm6mL14l8FaFtgCRXnPSp8YVxtz640bOsu40clG9Wk16XT9kys1hF2toxtJTv1100OpxpzSuk');
+    console.log(stripe);
+    
+
+  }
+ 
   return (
     <>
     <Header/>
@@ -89,7 +102,7 @@ const Viewbook = () => {
               {/*buttons */}
               <div className="flex justify-end">
                  <Link to={'/all-products'} className="bg-blue-900 text-white p-2 rounded me-3"><FontAwesomeIcon icon={faBackward}/>Back</Link>
-                  <Link className="bg-green-900 text-white p-2 ms-5 rounded">Buy $ {book?.discountPrice}</Link>
+                  <Link onClick={handlePayment} className="bg-green-900 text-white p-2 ms-5 rounded">Buy $ {book?.discountPrice}</Link>
               </div>
 
             </div>
