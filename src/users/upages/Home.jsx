@@ -3,7 +3,7 @@ import Header from '../ucomponents/Header'
 import Footer from '../../Components/Footer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link,  useNavigate } from 'react-router-dom'
 import { ToastContainer,toast} from 'react-toastify'
 import { getBooksUploadedByUsers } from '../../Services/allApis'
 import { searchBookContext } from '../../contextAPI/ContextShare'
@@ -112,7 +112,7 @@ const Home = () => {
 
            {/*Explore more button */}
            <div className="text-center my-8">
-            <Link to={'/all-books'} className='p-3 border rounded text-xl font-bold text-white bg-blue-800'> Explore More...</Link>
+            <Link to={'/all-products'} className='p-3 border rounded text-xl font-bold text-white bg-blue-800'> Explore More...</Link>
            </div>
    
      </section>

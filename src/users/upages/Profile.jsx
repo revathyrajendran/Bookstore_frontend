@@ -74,10 +74,14 @@ const Profile = () => {
   useEffect(()=>{
       if(bookstatus==true){
         getAllUserUploadedBooks()
-      }else if(purchasedBookStatus== true){
+      }else if(Purchasestatus== true){
         getAllUserPurchasedBooks()
       }
-  },[bookstatus,deleteBookStatus,purchasedBookStatus])
+  },[bookstatus,deleteBookStatus,Purchasestatus
+
+
+
+  ])
 
   //Function to see user purchased books
   const getAllUserPurchasedBooks = async()=>{
@@ -451,15 +455,15 @@ try {
                     
                      {/* bookstatus */}
                     <div className="px-3">
-                      <h1 className="text-2xl">{purchasedBookStatus?.title}</h1>
-                      <h2 className="text-xl">{purchasedBookStatus?.author}</h2>
-                       <h3 className="text-lg text-blue-400">$ {purchasedBookStatus?.discountPrice}</h3>
-                       <p className="text-justify">{purchasedBookStatus?.abstract}</p>
+                      <h1 className="text-2xl">{purchasedbook?.title}</h1>
+                      <h2 className="text-xl">{purchasedbook?.author}</h2>
+                       <h3 className="text-lg text-blue-400">$ {purchasedbook?.discountPrice}</h3>
+                       <p className="text-justify">{purchasedbook?.abstract}</p>
 
-                       {/*Approved */}
+                       {/*Purchased icon */}
                        <div className="flex">
                           
-                          <img width={'150px'} height={'150px '} src="https://psdstamps.com/wp-content/uploads/2022/04/round-sold-stamp-png.png" alt="pending" />
+                          <img width={'100px'} height={'100px '} src="https://uxwing.com/wp-content/themes/uxwing/download/e-commerce-currency-shopping/order-placed-purchased-icon.svg" alt="purchased" />
 
                        </div>
 
@@ -468,7 +472,7 @@ try {
                     </div>
                     {/*  book image */}
                     <div className="px-4 mt-4 md:mt-0">
-                      <img className='w-full' src="https://5.imimg.com/data5/SELLER/Default/2021/9/IM/NZ/XP/133456484/one-arranged-murder-paperback.jpg" alt="book" />
+                      <img className='w-full' src={purchasedbook?.imageUrl} alt="book" />
                         
 
                     </div>

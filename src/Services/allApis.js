@@ -68,10 +68,12 @@ export const seeAllJobsByNotLoggedInuser= async(searchkey)=>{
       return await commonApi("POST",`${SERVERURL}/user-application/add`,reqBody,reqHeader)
 
     }
-    
-
-    //purchased book
-    //approved book
+  
+    //purchase book -- user, called by ViewBook component when user clicks buy
+    export const makePaymentByUserApi=async(reqBody,reqHeader)=>{
+      return await commonApi("POST",`${SERVERURL}/make-payment`,reqBody,reqHeader)
+    }
+   
 
 
 //authorized user api -admin

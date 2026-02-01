@@ -6,7 +6,7 @@ import { faCamera, faEye } from '@fortawesome/free-regular-svg-icons'
 import { faBackward, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { Link, useParams } from 'react-router-dom'
 import { ToastContainer,toast} from 'react-toastify'
-import { getASingleBookApi } from '../../Services/allApis'
+import { getASingleBookApi, makePaymentByUserApi } from '../../Services/allApis'
 import SERVERURL from '../../Services/ServerURL'
 //buying imports
 import {loadStripe} from '@stripe/stripe-js';
@@ -62,6 +62,38 @@ const Viewbook = () => {
     //stripe object , pk_test_ is copied from stripe.com after sign in
     const stripe = await loadStripe('pk_test_51SvCnM2FRWxWdt4UC5xocClYRIm6mL14l8FaFtgCRXnPSp8YVxtz640bOsu40clG9Wk16XT9kys1hF2toxtJTv1100OpxpzSuk');
     console.log(stripe);
+
+    //token
+    const token = sessionStorage.getItem("token")
+    if(token){
+      //defining reqheader
+       const reqHeader = {
+        "Authorization" : `Bearer ${token}`
+       } 
+       //error prone
+       try{
+        //book holds the detail of the book user is viewing
+        const result = await makePaymentByUserApi(book,reqHeader)
+        console.log(result);
+           //redirectToCheckout is a predefined method in stripe
+        //stripe.redirectToCheckout({
+          //in axios server response is always in result.data
+          //sessionurl:result.data.checkoutSessionURL
+        //})
+        const checkoutSessionURL = result.data.checkoutSessionURL
+        if(checkoutSessionURL){
+          //redirect
+          window.location.href = checkoutSessionURL
+        }
+        
+        
+
+       }catch(err){
+        console.log(err);
+        
+       }
+
+    }
     
 
   }

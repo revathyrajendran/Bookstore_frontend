@@ -30,7 +30,7 @@ const Allproducts = () => {
 console.log(allCategories);
 
 //search data using context
-const {searchkey,setSearchkey} = useContext(searchBookContext)
+const {searchkey,setSearchKey} = useContext(searchBookContext)
 
  
   useEffect(()=>{
@@ -113,7 +113,7 @@ const {searchkey,setSearchkey} = useContext(searchBookContext)
         <h1 className="text-3xl">Collections</h1>
         {/*Search */}
         <div className="flex my-5">
-           <input type="text" value={searchkey} className="p-2 rounded text-black border-gray-200 placeholder-gray-600 border w-100 shadow" placeholder='Search by titles' onChange={e=>setSearchkey(e.target.value)} />
+           <input type="text" value={searchkey} className="p-2 rounded text-black border-gray-200 placeholder-gray-600 border w-100 shadow" placeholder='Search by titles' onChange={e=>setSearchKey(e.target.value)} />
            <button className="bg-blue-900 text-white p-2">Search</button>
         </div>
         </div>
@@ -157,7 +157,7 @@ const {searchkey,setSearchkey} = useContext(searchBookContext)
                     books.length>0?
                     books.map(book=>(
                       
-             <div key={book?._id} className="shadow p-3 rounded mx-2" hidden={book?.status == 'Pending' ||  book?.status == ''}>
+             <div key={book?._id} className="shadow p-3 rounded mx-2" hidden={book?.status == 'Pending' ||  book?.status == 'sold'}>
                   <img width={'100%'} height={'300px'} src={book?.imageUrl} alt="Uploaded Book Image" />
                   <div className="flex flex-col justify-center align-center">
                     <p className="text-blue-700 font-bold text-lg">{book?.author.slice(0,20)}...</p>
